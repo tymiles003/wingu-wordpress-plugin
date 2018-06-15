@@ -1,0 +1,37 @@
+{
+  "name": "wingu/wingu-wordpress-plugin",
+  "type": "wordpress-plugin",
+  "description": "",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Wingu",
+      "email": "hilfe@wingu.de"
+    }
+  ],
+  "require": {
+    "composer/installers": "v1.0.6",
+    "php-http/curl-client": "^1.7",
+    "wingu/wingu-sdk-php": "dev-master",
+    "zendframework/zend-diactoros": "^1.7@dev",
+    "phpdocumentor/reflection-docblock": "^5.0@dev",
+    "guzzlehttp/psr7": "^1.4",
+    "guzzlehttp/guzzle": "^6.3@dev"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:wingu-GmbH/wingu-sdk-php.git"
+    }
+  ],
+  "require-dev": {
+    "php": "^7.1"
+
+  },
+  "autoload": {
+    "psr-4": {
+      "Wingu\\Plugin\\Wordpress\\": [ "admin", "includes", "public" ]
+    }
+  },
+  "minimum-stability": "dev"
+}
