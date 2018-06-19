@@ -192,12 +192,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "0773d442aa96baf19d7195f14ba6e9c2da11f8ed"
+                "reference": "b4e2ffb457f37d629a6ec9b72fd0d9c85f3dfe2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/0773d442aa96baf19d7195f14ba6e9c2da11f8ed",
-                "reference": "0773d442aa96baf19d7195f14ba6e9c2da11f8ed",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/b4e2ffb457f37d629a6ec9b72fd0d9c85f3dfe2c",
+                "reference": "b4e2ffb457f37d629a6ec9b72fd0d9c85f3dfe2c",
                 "shasum": ""
             },
             "require": {
@@ -249,7 +249,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2018-04-23T13:18:18+00:00"
+            "time": "2018-06-14T22:09:16+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -777,12 +777,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
-                "reference": "eedd98e8bc9cfd924f056b4b5847066d4a250d2f"
+                "reference": "21162582b5cab4ad8bd7c4b6ea4419d022b0add9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/eedd98e8bc9cfd924f056b4b5847066d4a250d2f",
-                "reference": "eedd98e8bc9cfd924f056b4b5847066d4a250d2f",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/21162582b5cab4ad8bd7c4b6ea4419d022b0add9",
+                "reference": "21162582b5cab4ad8bd7c4b6ea4419d022b0add9",
                 "shasum": ""
             },
             "require": {
@@ -823,7 +823,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2018-06-13T21:44:20+00:00"
+            "time": "2018-06-14T16:14:50+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -831,12 +831,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "6537078c5e43d87931eebce7b2a07c50460a3fde"
+                "reference": "329341ac936f0be402ed13bda9d4c3709caee19d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/6537078c5e43d87931eebce7b2a07c50460a3fde",
-                "reference": "6537078c5e43d87931eebce7b2a07c50460a3fde",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/329341ac936f0be402ed13bda9d4c3709caee19d",
+                "reference": "329341ac936f0be402ed13bda9d4c3709caee19d",
                 "shasum": ""
             },
             "require": {
@@ -870,7 +870,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2018-04-19T08:00:57+00:00"
+            "time": "2018-06-14T16:15:19+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -878,12 +878,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "69bf1b199584f2004365a150c2e6cfbe852b6d66"
+                "reference": "6e17163fca40eaa8ca76dee8be8f3856a3d40bb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/69bf1b199584f2004365a150c2e6cfbe852b6d66",
-                "reference": "69bf1b199584f2004365a150c2e6cfbe852b6d66",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/6e17163fca40eaa8ca76dee8be8f3856a3d40bb7",
+                "reference": "6e17163fca40eaa8ca76dee8be8f3856a3d40bb7",
                 "shasum": ""
             },
             "require": {
@@ -915,7 +915,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2018-02-14T18:59:20+00:00"
+            "time": "2018-06-14T16:15:07+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1456,12 +1456,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:wingu-GmbH/wingu-sdk-php.git",
-                "reference": "2bb74cb034242a4882ba23e85e133547b280d121"
+                "reference": "61fa3b68a4bae3b513fdf45d3e30229c90ff462a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/2bb74cb034242a4882ba23e85e133547b280d121",
-                "reference": "2bb74cb034242a4882ba23e85e133547b280d121",
+                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/61fa3b68a4bae3b513fdf45d3e30229c90ff462a",
+                "reference": "61fa3b68a4bae3b513fdf45d3e30229c90ff462a",
                 "shasum": ""
             },
             "require": {
@@ -1534,7 +1534,7 @@
                 "source": "https://github.com/wingu-GmbH/wingu-sdk-php/tree/master",
                 "issues": "https://github.com/wingu-GmbH/wingu-sdk-php/issues"
             },
-            "time": "2018-06-12T09:21:02+00:00"
+            "time": "2018-06-18T09:54:59+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",

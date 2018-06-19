@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Author: class-wingu
+ * Author: Wingu
  * Author Email: hilfe@wingu.de
  * Author URI: https://www.wingu.de
  * Description:

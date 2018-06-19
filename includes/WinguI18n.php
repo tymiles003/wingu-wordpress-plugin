@@ -13,7 +13,7 @@ class WinguI18n
         load_plugin_textdomain(
             $this->domain,
             false,
-            \dirname(plugin_basename(__FILE__), 2) . '/languages/'
+            \dirname(plugin_basename(__FILE__), 2) . '/lang/'
         );
     }
 
