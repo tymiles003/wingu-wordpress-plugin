@@ -23,7 +23,7 @@ if (! defined('ABSPATH')) {
 
 define('WINGU_VERSION', '1.0.0');
 
-if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
     echo 'You need to run \'composer install\' in plugin directory first.';
     exit;
 }
@@ -46,8 +46,7 @@ register_deactivation_hook(__FILE__, 'deactivate_wingu');
 
 function run_wingu()
 {
-    $plugin = new Wingu();
-    $plugin->run();
+    Wingu::instance()->run();
 }
 
 run_wingu();

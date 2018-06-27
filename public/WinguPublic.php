@@ -14,7 +14,6 @@ class WinguPublic
 
     public function __construct($name, $version)
     {
-
         $this->name    = $name;
         $this->version = $version;
     }

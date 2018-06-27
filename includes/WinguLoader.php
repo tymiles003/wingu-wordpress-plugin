@@ -50,7 +50,6 @@ class WinguLoader
      */
     private function add($hooks, $hook, $component, $callback, $priority, $accepted_args) : array
     {
-
         $hooks[] = [
             'hook' => $hook,
             'component' => $component,

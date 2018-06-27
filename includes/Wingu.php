@@ -7,23 +7,33 @@ namespace Wingu\Plugin\Wordpress;
 use Http\Client\Curl\Client;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Wingu\Engine\SDK\Api\Configuration;
+use Wingu\Engine\SDK\Api\WinguApi;
 use Wingu\Engine\SDK\Hydrator\SymfonySerializerHydrator;
 
 class Wingu
 {
+    private static $instance;
+
+    public const GLOBAL_KEY_API_KEY            = 'wingu_setting_api_key';
+    public const GLOBAL_KEY_API_IS_VALID       = 'wingu_setting_api_key_is_valid';
+    public const GLOBAL_KEY_DISPLAY_PREFERENCE = 'wingu_setting_display_preference';
+    public const GLOBAL_KEY_LINK_BACK          = 'wingu_setting_link_back';
+    public const GLOBAL_KEY_LINK_BACK_TEXT     = 'wingu_setting_link_back_text';
+
+    public const POST_KEY_DISPLAY_PREFERENCE = '_wingu_post_display_preference';
+    public const POST_KEY_LINK_BACK          = '_wingu_post_link_back';
+    public const POST_KEY_TRIGGERS           = '_wingu_post_triggers';
+
     /** @var WinguLoader */
     protected $loader;
 
     /** @var string */
-    protected $wingu;
+    protected $name;
 
     /** @var string */
     protected $version;
 
-    public static $configuration;
-    public static $messageFactory;
-    public static $httpClient;
-    public static $hydrator;
+    public static $API;
 
     public function __construct()
     {
@@ -32,15 +42,26 @@ class Wingu
         } else {
             $this->version = '1.0.0';
         }
-        $this->wingu  = 'wingu-wordpress-plugin';
+        $this->name   = 'wingu-wordpress-plugin';
         $this->loader = new WinguLoader();
         $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
-        self::$messageFactory = new GuzzleMessageFactory();
-        self::$configuration  = new Configuration((string) get_option('wingu_setting_api_key'), 'http://wingu');
-        self::$httpClient     = new Client(self::$messageFactory);
-        self::$hydrator       = new SymfonySerializerHydrator();
+        $messageFactory = new GuzzleMessageFactory();
+        self::$API = new WinguApi(
+            new Configuration((string) get_option(self::GLOBAL_KEY_API_KEY), 'http://wingu'),
+            new Client($messageFactory),
+            $messageFactory,
+            new SymfonySerializerHydrator());
+    }
+
+    public static function instance() : Wingu
+    {
+        if ( self::$instance === null) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 
     private function set_locale() : void
@@ -51,27 +72,24 @@ class Wingu
 
     private function define_admin_hooks() : void
     {
-        $plugin_name = $this->wingu . '/' . basename(__FILE__);
-        $wingu_admin = new WinguAdmin($this->get_Wingu(), $this->get_version());
+        $plugin_name = $this->name . '/' . basename(__FILE__);
+        $wingu_admin = new WinguAdmin($this->name(), $this->version());
         $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
+        add_option(self::GLOBAL_KEY_API_IS_VALID, false);
+        $this->loader->add_action('admin_notices', $wingu_admin, 'api_key_notice' );
         $this->loader->add_action('admin_init', $wingu_admin, 'wingu_settings_init');
         $this->loader->add_filter('plugin_action_links_' . $plugin_name, $wingu_admin, 'wingu_settings_link');
-        $this->loader->add_action('add_meta_boxes', $wingu_admin, 'my_meta_box');
+        $this->loader->add_action('manage_posts_custom_column' , $wingu_admin, 'wingu_custom_posts_column', 10, 2);
+        $this->loader->add_filter('manage_posts_columns' , $wingu_admin, 'add_wingu_posts_column');
+        $this->loader->add_action('add_meta_boxes', $wingu_admin, 'wingu_meta_box');
+        $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta');
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_scripts');
-
-        if (get_option('wingu_setting_link_back')) {
-            if (get_option('wingu_setting_display_preference') === 'content') {
-                $this->loader->add_filter('the_content', $wingu_admin, 'link_back_content_excerpt');
-            } elseif (get_option('wingu_setting_display_preference') === 'excerpt') {
-                $this->loader->add_filter('the_excerpt', $wingu_admin, 'link_back_content_excerpt');
-            }
-        }
     }
 
     private function define_public_hooks() : void
     {
-        $wingu_public = new WinguPublic($this->get_Wingu(), $this->get_version());
+        $wingu_public = new WinguPublic($this->name(), $this->version());
         $this->loader->add_action('wp_enqueue_scripts', $wingu_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $wingu_public, 'enqueue_scripts');
     }
@@ -81,18 +99,20 @@ class Wingu
         $this->loader->run();
     }
 
-    public function get_Wingu() : string
+    public function name() : string
     {
-        return $this->wingu;
+        return $this->name;
     }
 
-    public function get_loader() : WinguLoader
+    public function loader() : WinguLoader
     {
         return $this->loader;
     }
 
-    public function get_version() : string
+    public function version() : string
     {
         return $this->version;
     }
 }
+
+Wingu::instance();
