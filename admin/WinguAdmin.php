@@ -84,9 +84,9 @@ class WinguAdmin
                 $response->next();
                 $i++;
             }
-            update_option(Wingu::GLOBAL_KEY_API_IS_VALID, true);
+            update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'true');
         } catch (Unauthorized $exception) {
-           update_option(Wingu::GLOBAL_KEY_API_IS_VALID, false);
+            update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'false');
         }
         echo '</ol>';
 //        http://wingu/api/doc#/operations/Analytics/get_api_analytics__resource_type___resource_id___interaction___aggregation__monthly
@@ -106,27 +106,26 @@ class WinguAdmin
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
+        if (get_option(Wingu::GLOBAL_KEY_API_IS_VALID) === 'false') {
+            echo 'Invalid Wingu API Key.';
+            return;
+        }
+
         wp_nonce_field(plugin_basename(__FILE__), 'wingu_nonce');
 
         echo '<p>Display</p>';
         $displayPreference = $this->compareValues($post->ID, Wingu::POST_KEY_DISPLAY_PREFERENCE, Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
         $linkBack          = $this->compareValues($post->ID, Wingu::POST_KEY_LINK_BACK, Wingu::GLOBAL_KEY_LINK_BACK);
         ?>
-        <label for="wingu_setting_display_preference">
-            <input type="radio" name="wingu_post_display_preference" value="content" <?php checked('content',
-                $displayPreference, true); ?>>Content
-        </label>
-        <label for="wingu_setting_display_preference">
-            <input type="radio" id="wingu_setting_display_preference" name="wingu_post_display_preference"
-                   value="excerpt" <?php checked('excerpt', $displayPreference, true); ?>>Excerpt
-        </label>
+        <label for="wingu_post_display_preference"><input type="radio" name="wingu_post_display_preference" value="content" <?php checked('content',
+        $displayPreference, true); ?>>Content</label>
+        <label for="wingu_post_display_preference"><input type="radio" name="wingu_post_display_preference" value="excerpt" <?php checked('excerpt',
+        $displayPreference, true); ?>>Excerpt</label>
         <br>
-        <label for="wingu_setting_link_back">
-            <input type="checkbox" id="wingu_setting_link_back" name="wingu_post_link_back" value="1" <?php checked(1,
-                $linkBack, true); ?>>Link back
-        </label>
+        <label for="wingu_post_link_back"><input type="checkbox" id="wingu_post_link_back" name="wingu_post_link_back" value="true" <?php checked('true',
+        $linkBack, true); ?>>Link back</label>
         <br>
-        <select id="wingu_post_triggers" name="wingu_post_triggers[]" multiple>
+		<select id="wingu_post_triggers" name="wingu_post_triggers[]" multiple>
             <?php
             try {
                 $response = $winguChannelApi->myChannels();
@@ -157,9 +156,9 @@ class WinguAdmin
                     $response->next();
                     $i++;
                 }
-                update_option(Wingu::GLOBAL_KEY_API_IS_VALID, true);
+                update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'true');
             } catch (Unauthorized $exception) {
-                  update_option(Wingu::GLOBAL_KEY_API_IS_VALID, false);
+                update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'false');
             }
             ?>
         </select>
@@ -178,8 +177,8 @@ class WinguAdmin
         }
 
         $new_val_disp     = $_POST['wingu_post_display_preference'];
-        $new_val_link     = $_POST['wingu_post_link_back'];
-        $new_val_triggers = $_POST['wingu_post_triggers'];
+        $new_val_link     = $_POST['wingu_post_link_back'] ?? 'false';
+        $new_val_triggers = $_POST['wingu_post_triggers'] ?? [];
 
         $val_disp     = get_post_meta($post_id, Wingu::POST_KEY_DISPLAY_PREFERENCE, true);
         $val_link     = get_post_meta($post_id, Wingu::POST_KEY_LINK_BACK, true);
@@ -197,17 +196,17 @@ class WinguAdmin
         }
         if (!metadata_exists('post', $post_id, Wingu::POST_KEY_TRIGGERS)) {
             add_post_meta($post_id, Wingu::POST_KEY_TRIGGERS, $new_val_triggers, true);
-            $this->updateTriggers($new_val_triggers);
+//            $this->updateTriggers($new_val_disp, $new_val_link, $new_val_triggers);
         } elseif ($new_val_triggers !== $val_triggers) {
             update_post_meta($post_id, Wingu::POST_KEY_TRIGGERS, $new_val_triggers);
-            $this->updateTriggers($new_val_triggers);
+//            $this->updateTriggers($new_val_disp, $new_val_link, $new_val_triggers);
         }
     }
 
     public function wingu_meta_box() : void
     {
         add_meta_box(
-            'wingu_post_metabox', __('Wingu Metabox', 'textdomain'), [$this, 'add_wingu_post_meta_box'], 'post'
+            'wingu_post_metabox', __('Wingu', 'textdomain'), [$this, 'add_wingu_post_meta_box'], ['post', 'page']
         );
     }
 
@@ -260,7 +259,7 @@ class WinguAdmin
 
     public function wingu_settings_section() : void
     {
-        echo '<p>Enter your API Key. Choose whether you want to connect to triggers whole posts or excerpts. Select if links back to your site should be added at the end of your texts.</p>';
+        echo '<p>Enter your API Key. Choose whether you want to connect to triggers whole posts or only excerpts. Select if links back to your site should be added at the end of your texts.</p>';
     }
 
     public function wingu_settings_api_key() : void
@@ -291,7 +290,7 @@ class WinguAdmin
     {
         $setting = get_option(Wingu::GLOBAL_KEY_LINK_BACK);
         ?>
-        <input type="checkbox" id="wingu_setting_link_back" name="wingu_setting_link_back" value="1" <?php checked(1,
+        <input type="checkbox" id="wingu_setting_link_back" name="wingu_setting_link_back" value="true" <?php checked('true',
             $setting, true); ?>>
         <?php
     }
@@ -305,14 +304,14 @@ class WinguAdmin
         <?php
     }
 
-    private function updateTriggers($new_meta_val_triggers) : void
+    private function updateTriggers($new_val_disp, $new_val_link, $new_meta_val_triggers) : void
     {
         global $post;
-
         $winguApi = Wingu::$API;
-        $linkback = $this->compareValues($post->ID, Wingu::POST_KEY_LINK_BACK, Wingu::GLOBAL_KEY_LINK_BACK);
-        $dispPref = $this->compareValues($post->ID, Wingu::POST_KEY_DISPLAY_PREFERENCE,
-            Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
+        $linkback = $new_val_link;
+        $dispPref = $new_val_disp;
+//        $linkback = $this->compareValues($post->ID, Wingu::POST_KEY_LINK_BACK, Wingu::GLOBAL_KEY_LINK_BACK);
+//        $dispPref = $this->compareValues($post->ID, Wingu::POST_KEY_DISPLAY_PREFERENCE, Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
         $text     = null;
         if ($dispPref === 'content') {
             $text = $post->post_content;
@@ -349,7 +348,7 @@ class WinguAdmin
     {
         if ($column === 'wingu') {
             $triggers = get_post_meta($postId, Wingu::POST_KEY_TRIGGERS, true);
-            echo '<input type="checkbox" disabled', (! empty($triggers) ? ' checked' : ''), '/>';
+            echo '<input type="checkbox" disabled', (!empty($triggers) ? ' checked' : ''), '/>';
         }
     }
 
@@ -360,8 +359,37 @@ class WinguAdmin
     }
 
     public function api_key_notice(): void {
-        if (get_option(Wingu::GLOBAL_KEY_API_IS_VALID) === false) {
-            echo '<div class="update-nag"><p>The API Key is incorrect. Enter valid key <a href="' . esc_url(get_admin_url() . 'options-general.php?page=wingu-options') .'" target="_blank">here</a></div>';
+        if (get_option(Wingu::GLOBAL_KEY_API_IS_VALID) !== 'true') {
+            echo '<div class="notice notice-error"><p>The Wingu API Key is incorrect. Enter valid key <a href="' . esc_url(get_admin_url() . 'options-general.php?page=wingu-options') .'" target="_blank">here</a></div>';
         }
-}
+    }
+
+    public function wingu_post_updated($postId, $updatedPost): void {
+        $winguApi = Wingu::$API;
+        $linkback = $_POST['wingu_post_link_back'] ?? 'false';
+        $dispPref = $_POST['wingu_post_display_preference'];
+        $text     = null;
+        if ($dispPref === 'content') {
+            $text = $updatedPost->post_content;
+        } elseif ($dispPref === 'excerpt') {
+            $text = $updatedPost->post_excerpt;
+        }
+
+        if ($linkback === 'true') {
+            $text .= get_option(Wingu::GLOBAL_KEY_LINK_BACK_TEXT);
+        }
+        if(!isset($_POST['wingu_post_triggers']) || $text === null) {
+            return;
+        }
+
+        $createdComponent = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+        $createdDeck      = $winguApi->deck()->createDeck(new \Wingu\Engine\SDK\Model\Request\Deck\Deck('tytul decka',
+            'opis decka', null));
+        $template         = $winguApi->contentTemplate()->templates()->current()->id();
+        $createdContent   = $winguApi->content()->createContent(new \Wingu\Engine\SDK\Model\Request\Content\PrivateContent($template,
+            null));
+        $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponent->id(), 1));
+        $winguApi->content()->attachMyContentToChannelsExclusively($createdContent->id(),
+            new PrivateContentChannels($_POST['wingu_post_triggers']));
+    }
 }

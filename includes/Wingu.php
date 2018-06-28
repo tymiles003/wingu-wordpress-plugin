@@ -12,6 +12,7 @@ use Wingu\Engine\SDK\Hydrator\SymfonySerializerHydrator;
 
 class Wingu
 {
+    /** @var self */
     private static $instance;
 
     public const GLOBAL_KEY_API_KEY            = 'wingu_setting_api_key';
@@ -60,13 +61,13 @@ class Wingu
         if ( self::$instance === null) {
             self::$instance = new self;
         }
-
         return self::$instance;
     }
 
     private function set_locale() : void
     {
         $wingu_i18n = new WinguI18n();
+        $wingu_i18n->set_domain($this->name());
         $this->loader->add_action('plugins_loaded', $wingu_i18n, 'load_plugin_textdomain');
     }
 
@@ -75,14 +76,16 @@ class Wingu
         $plugin_name = $this->name . '/' . basename(__FILE__);
         $wingu_admin = new WinguAdmin($this->name(), $this->version());
         $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
-        add_option(self::GLOBAL_KEY_API_IS_VALID, false);
         $this->loader->add_action('admin_notices', $wingu_admin, 'api_key_notice' );
         $this->loader->add_action('admin_init', $wingu_admin, 'wingu_settings_init');
         $this->loader->add_filter('plugin_action_links_' . $plugin_name, $wingu_admin, 'wingu_settings_link');
         $this->loader->add_action('manage_posts_custom_column' , $wingu_admin, 'wingu_custom_posts_column', 10, 2);
         $this->loader->add_filter('manage_posts_columns' , $wingu_admin, 'add_wingu_posts_column');
         $this->loader->add_action('add_meta_boxes', $wingu_admin, 'wingu_meta_box');
-        $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta');
+        $this->loader->add_action('post_updated', $wingu_admin, 'wingu_post_updated', 50, 2);
+        $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta', 100);
+
+
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_scripts');
     }
