@@ -29,21 +29,21 @@ class Wingu
     protected $loader;
 
     /** @var string */
-    protected $name;
+    protected static $name;
 
     /** @var string */
-    protected $version;
+    protected static $version;
 
     public static $API;
 
     public function __construct()
     {
         if (\defined('WINGU_VERSION')) {
-            $this->version = WINGU_VERSION;
+            $this::$version = WINGU_VERSION;
         } else {
-            $this->version = '1.0.0';
+            $this::$version = '1.0.0';
         }
-        $this->name   = 'wingu-wordpress-plugin';
+        $this::$name   = 'wingu-wordpress-plugin';
         $this->loader = new WinguLoader();
         $this->set_locale();
         $this->define_admin_hooks();
@@ -67,14 +67,15 @@ class Wingu
     private function set_locale() : void
     {
         $wingu_i18n = new WinguI18n();
-        $wingu_i18n->set_domain($this->name());
+        $wingu_i18n->set_domain(self::name());
         $this->loader->add_action('plugins_loaded', $wingu_i18n, 'load_plugin_textdomain');
     }
 
     private function define_admin_hooks() : void
     {
-        $plugin_name = $this->name . '/' . basename(__FILE__);
-        $wingu_admin = new WinguAdmin($this->name(), $this->version());
+        var_dump(plugin_basename(__FILE__));
+        $plugin_name = self::$name . '/' . basename(__FILE__);
+        $wingu_admin = new WinguAdmin(self::name(), self::version());
         $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
         $this->loader->add_action('admin_notices', $wingu_admin, 'api_key_notice' );
         $this->loader->add_action('admin_init', $wingu_admin, 'wingu_settings_init');
@@ -92,7 +93,7 @@ class Wingu
 
     private function define_public_hooks() : void
     {
-        $wingu_public = new WinguPublic($this->name(), $this->version());
+        $wingu_public = new WinguPublic(self::name(), self::version());
         $this->loader->add_action('wp_enqueue_scripts', $wingu_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $wingu_public, 'enqueue_scripts');
     }
@@ -102,9 +103,9 @@ class Wingu
         $this->loader->run();
     }
 
-    public function name() : string
+    public static function name() : string
     {
-        return $this->name;
+        return self::$name;
     }
 
     public function loader() : WinguLoader
@@ -112,9 +113,9 @@ class Wingu
         return $this->loader;
     }
 
-    public function version() : string
+    public static function version() : string
     {
-        return $this->version;
+        return self::$version;
     }
 }
 

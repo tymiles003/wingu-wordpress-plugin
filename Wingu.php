@@ -11,6 +11,7 @@ declare(strict_types=1);
  * Plugin Name: wingu
  * Plugin URI: https://www.wingu.de/en/developer
  * Version: 1.0
+ * Text Domain: wingu-wordpress-plugin
  * */
 
 use Wingu\Plugin\Wordpress\WinguActivator;

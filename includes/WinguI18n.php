@@ -6,6 +6,7 @@ namespace Wingu\Plugin\Wordpress;
 
 class WinguI18n
 {
+    /** @var string */
     private $domain;
 
     public function load_plugin_textdomain() : void
@@ -13,7 +14,7 @@ class WinguI18n
         load_plugin_textdomain(
             $this->domain,
             false,
-            \dirname(plugin_basename(__FILE__), 2) . '/lang/'
+            \dirname(plugin_basename(__FILE__), 2) . '/languages/'
         );
     }
 
@@ -21,4 +22,11 @@ class WinguI18n
     {
         $this->domain = $domain;
     }
+
+    public function domain() : string
+    {
+        return $this->domain;
+    }
+
+
 }

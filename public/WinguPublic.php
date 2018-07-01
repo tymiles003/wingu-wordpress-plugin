@@ -25,4 +25,15 @@ class WinguPublic
     public function enqueue_scripts() : void
     {
     }
+
+    public function name() : string
+    {
+        return $this->name;
+    }
+
+    public function version() : string
+    {
+        return $this->version;
+    }
+
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "135cac29748f156ce75ee0fc4a6fa0e4",
+    "content-hash": "d17932fdaab77936d05ce169aa65b1bb",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1250,12 +1250,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-info.git",
-                "reference": "80d0b45d6a7c40c37282eb55afb1bb3f07d73577"
+                "reference": "c8b51f307a3ae90c117d642f2e9584fc73039e5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-info/zipball/80d0b45d6a7c40c37282eb55afb1bb3f07d73577",
-                "reference": "80d0b45d6a7c40c37282eb55afb1bb3f07d73577",
+                "url": "https://api.github.com/repos/symfony/property-info/zipball/c8b51f307a3ae90c117d642f2e9584fc73039e5a",
+                "reference": "c8b51f307a3ae90c117d642f2e9584fc73039e5a",
                 "shasum": ""
             },
             "require": {
@@ -1318,7 +1318,7 @@
                 "type",
                 "validator"
             ],
-            "time": "2018-05-16T14:42:13+00:00"
+            "time": "2018-06-26T16:34:11+00:00"
         },
         {
             "name": "symfony/serializer",
@@ -1326,12 +1326,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/serializer.git",
-                "reference": "dc37a92aed42317af1da2afc5c53ff188c0ccdcf"
+                "reference": "94fe6f679a27d985574e22e76363452afd29b472"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/serializer/zipball/dc37a92aed42317af1da2afc5c53ff188c0ccdcf",
-                "reference": "dc37a92aed42317af1da2afc5c53ff188c0ccdcf",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/94fe6f679a27d985574e22e76363452afd29b472",
+                "reference": "94fe6f679a27d985574e22e76363452afd29b472",
                 "shasum": ""
             },
             "require": {
@@ -1398,7 +1398,7 @@
             ],
             "description": "Symfony Serializer Component",
             "homepage": "https://symfony.com",
-            "time": "2018-06-22T08:59:57+00:00"
+            "time": "2018-06-27T21:06:44+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -1452,16 +1452,16 @@
         },
         {
             "name": "wingu/wingu-sdk-php",
-            "version": "dev-content_template",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:wingu-GmbH/wingu-sdk-php.git",
-                "reference": "a9a5c76e90f1709da0e5766b8b389ae154bae038"
+                "reference": "4ec0b5a13a04340cac210ba8072a6ca5ef11f3ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/a9a5c76e90f1709da0e5766b8b389ae154bae038",
-                "reference": "a9a5c76e90f1709da0e5766b8b389ae154bae038",
+                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/4ec0b5a13a04340cac210ba8072a6ca5ef11f3ac",
+                "reference": "4ec0b5a13a04340cac210ba8072a6ca5ef11f3ac",
                 "shasum": ""
             },
             "require": {
@@ -1531,10 +1531,10 @@
             ],
             "description": "wingu engine PHP SDK",
             "support": {
-                "source": "https://github.com/wingu-GmbH/wingu-sdk-php/tree/content_template",
+                "source": "https://github.com/wingu-GmbH/wingu-sdk-php/tree/master",
                 "issues": "https://github.com/wingu-GmbH/wingu-sdk-php/issues"
             },
-            "time": "2018-06-26T07:24:18+00:00"
+            "time": "2018-06-29T10:08:58+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -1542,12 +1542,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "26efe2451bc3c282cddfb8acfb182c9a38966fd1"
+                "reference": "7ab5bcfcfe08958cd70ab10ce28665fca2d685db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/26efe2451bc3c282cddfb8acfb182c9a38966fd1",
-                "reference": "26efe2451bc3c282cddfb8acfb182c9a38966fd1",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/7ab5bcfcfe08958cd70ab10ce28665fca2d685db",
+                "reference": "7ab5bcfcfe08958cd70ab10ce28665fca2d685db",
                 "shasum": ""
             },
             "require": {
@@ -1566,12 +1566,22 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7.x-dev",
-                    "dev-develop": "1.8.x-dev",
+                    "dev-master": "1.8.x-dev",
+                    "dev-develop": "1.9.x-dev",
                     "dev-release-2.0": "2.0.x-dev"
                 }
             },
             "autoload": {
+                "files": [
+                    "src/functions/create_uploaded_file.php",
+                    "src/functions/marshal_headers_from_sapi.php",
+                    "src/functions/marshal_method_from_sapi.php",
+                    "src/functions/marshal_protocol_version_from_sapi.php",
+                    "src/functions/marshal_uri_from_sapi.php",
+                    "src/functions/normalize_server.php",
+                    "src/functions/normalize_uploaded_files.php",
+                    "src/functions/parse_cookie_header.php"
+                ],
                 "psr-4": {
                     "Zend\\Diactoros\\": "src/"
                 }
@@ -1587,7 +1597,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-05-29T18:52:59+00:00"
+            "time": "2018-06-27T19:15:45+00:00"
         }
     ],
     "packages-dev": [],
