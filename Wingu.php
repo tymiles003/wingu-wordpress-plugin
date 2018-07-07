@@ -6,9 +6,9 @@ declare(strict_types=1);
  * Author: Wingu
  * Author Email: hilfe@wingu.de
  * Author URI: https://www.wingu.de
- * Description:
+ * Description: Describe me here
  * Domain Path: /lang
- * Plugin Name: wingu
+ * Plugin Name: Wingu
  * Plugin URI: https://www.wingu.de/en/developer
  * Version: 1.0
  * Text Domain: wingu-wordpress-plugin

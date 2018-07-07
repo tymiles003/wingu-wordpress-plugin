@@ -56,6 +56,16 @@ class Wingu
             new SymfonySerializerHydrator());
     }
 
+    public static function refreshApiKey() : void
+    {
+        $messageFactory = new GuzzleMessageFactory();
+        self::$API = new WinguApi(
+            new Configuration((string) get_option(self::GLOBAL_KEY_API_KEY), 'http://wingu'),
+            new Client($messageFactory),
+            $messageFactory,
+            new SymfonySerializerHydrator());
+    }
+
     public static function instance() : Wingu
     {
         if ( self::$instance === null) {
@@ -73,7 +83,7 @@ class Wingu
 
     private function define_admin_hooks() : void
     {
-        var_dump(plugin_basename(__FILE__));
+//        var_dump(plugin_basename(__FILE__));
         $plugin_name = self::$name . '/' . basename(__FILE__);
         $wingu_admin = new WinguAdmin(self::name(), self::version());
         $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
@@ -85,6 +95,7 @@ class Wingu
         $this->loader->add_action('add_meta_boxes', $wingu_admin, 'wingu_meta_box');
         $this->loader->add_action('post_updated', $wingu_admin, 'wingu_post_updated', 50, 2);
         $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta', 100);
+        $this->loader->add_action( 'wp_ajax_check_api_key', $wingu_admin, 'check_api_key');
 
 
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_styles');

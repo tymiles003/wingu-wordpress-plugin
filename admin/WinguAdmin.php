@@ -38,6 +38,29 @@ class WinguAdmin
 
     public function enqueue_scripts() : void
     {
+        wp_enqueue_script('ajax-apikey-checker', plugins_url(Wingu::name() . '/admin/js/checkApiKey.js'), ['jquery']);
+//        $apikey_nonce = wp_create_nonce('wingu_api_key');
+    }
+
+    public function check_api_key() : void
+    {
+        if (! current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
+        }
+
+        $old = get_option(Wingu::GLOBAL_KEY_API_KEY);
+        update_option(Wingu::GLOBAL_KEY_API_KEY, $_GET['apikey']);
+        Wingu::refreshApiKey();
+
+        try {
+            Wingu::$API->wingu()->ping();
+            update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'true');
+        } catch (Unauthorized $exception) {
+            update_option(Wingu::GLOBAL_KEY_API_KEY, $old);
+            echo 'Invalid';
+        }
+
+        wp_die();
     }
 
     public function name(): string
@@ -56,13 +79,17 @@ class WinguAdmin
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
-        $winguChannelApi = Wingu::$API->channel();
-        try {
-            $ping = Wingu::$API->wingu()->ping();
-        } catch (Unauthorized $exception) {
-            _e('Invalid Wingu API Key.', Wingu::name());
-        }
+//        $winguChannelApi = Wingu::$API->channel();
+
+        $activeTab = $_GET['tab'] ?? 'settings';
         ?>
+        <h2 class="nav-tab-wrapper">
+            <a href="?page=wingu-options&tab=settings" id="settings_tab" class="nav-tab <?php echo $activeTab === 'settings' ? 'nav-tab-active' : ''; ?>">Settings</a>
+            <?php if (get_option(Wingu::GLOBAL_KEY_API_IS_VALID) === 'true'): ?>
+            <a href="?page=wingu-options&tab=triggers" id="triggers_tab" class="nav-tab <?php echo $activeTab === 'triggers' ? 'nav-tab-active' : ''; ?>">Triggers</a>
+            <?php endif ?>
+        </h2>
+        <?php if ($activeTab === 'settings'): ?>
         <form method="POST" action="options.php">
             <?php
             settings_fields('wingu-options');
@@ -70,42 +97,57 @@ class WinguAdmin
             submit_button();
             ?>
         </form>
+        <?php elseif ($activeTab === 'triggers'): ?>
         <h2>Triggers</h2>
         <ol>
         <?php
+//        $data = [];
+//        try {
+//            $response = $winguChannelApi->myChannels();
+//            $response->current();
+//            $i = 0;
+//            while ($response->valid()) {
+//                $channelname = $response->current()->name();
+//                $type        = \get_class($response->current());
+//                $channeltype = null;
+//                switch ($type) {
+//                    case PrivateGeofence::class:
+//                        $channeltype = 'Geofence';
+//                        break;
+//                    case PrivateQrCode::class:
+//                        $channeltype = 'QrCode';
+//                        break;
+//                    case PrivateNfc::class:
+//                        $channeltype = 'Nfc';
+//                        break;
+//                    case PrivateBeacon::class:
+//                        $channeltype = 'Beacon';
+//                        break;
+//                }
+//                $data[] = [
+//                        'id' => $response->current()->id(),
+//                        'name' => $channelname,
+//                        'type' => $channeltype,
+//                        ];
+////                echo '<li>' . $channelname . ': ' . $channeltype . '</li>';
+//                $response->next();
+////                $i++;
+//            }
+
         try {
-            $response = $winguChannelApi->myChannels();
-            $response->current();
-            $i = 0;
-            while ($response->valid() && $i < 7) {
-                $channelname = $response->current()->name();
-                $type        = \get_class($response->current());
-                $channeltype = null;
-                switch ($type) {
-                    case PrivateGeofence::class:
-                        $channeltype = 'Geofence';
-                        break;
-                    case PrivateQrCode::class:
-                        $channeltype = 'QrCode';
-                        break;
-                    case PrivateNfc::class:
-                        $channeltype = 'Nfc';
-                        break;
-                    case PrivateBeacon::class:
-                        $channeltype = 'Beacon';
-                        break;
-                }
-                echo '<li>' . $channelname . ': ' . $channeltype . '</li>';
-                $response->next();
-                $i++;
-            }
+            $test = new WinguListTable();
+            $test->prepare_items();
+            $test->display();
             update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'true');
         } catch (Unauthorized $exception) {
             update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'false');
         }
         echo '</ol>';
 //        http://wingu/api/doc#/operations/Analytics/get_api_analytics__resource_type___resource_id___interaction___aggregation__monthly
-    }
+?>
+        <?php endif ?>
+        <?php
+        }
 
     public function wingu_settings_link($links) : array
     {
@@ -117,7 +159,7 @@ class WinguAdmin
     {
         $winguChannelApi = Wingu::$API->channel();
 
-        if (! current_user_can('manage_options')) {
+        if (! current_user_can('edit_others_posts')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
@@ -238,7 +280,7 @@ class WinguAdmin
             [$this, 'wingu_settings_api_key'],
             'wingu-options',
             'wingu_settings_section',
-            [Wingu::GLOBAL_KEY_API_KEY]
+            Wingu::GLOBAL_KEY_API_KEY
         );
 
         add_settings_field(
@@ -247,7 +289,7 @@ class WinguAdmin
             [$this, 'wingu_settings_display_preference'],
             'wingu-options',
             'wingu_settings_section',
-            [Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE]
+            Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE
         );
 
         add_settings_field(
@@ -256,7 +298,7 @@ class WinguAdmin
             [$this, 'wingu_settings_link_back'],
             'wingu-options',
             'wingu_settings_section',
-            [Wingu::GLOBAL_KEY_LINK_BACK]
+            Wingu::GLOBAL_KEY_LINK_BACK
         );
 
         add_settings_field(
@@ -265,7 +307,7 @@ class WinguAdmin
             [$this, 'wingu_settings_link_back_text'],
             'wingu-options',
             'wingu_settings_section',
-            [Wingu::GLOBAL_KEY_LINK_BACK_TEXT]
+            Wingu::GLOBAL_KEY_LINK_BACK_TEXT
         );
 
         register_setting('wingu-options', Wingu::GLOBAL_KEY_API_KEY);
@@ -282,7 +324,8 @@ class WinguAdmin
     public function wingu_settings_api_key($name) : void
     {
         $value = get_option($name);
-        echo "<input type='text' size='50' maxlength='36' name='{$name}' value=" . ($value !== null ? esc_attr($value) : '') . '>';
+        echo "<input type='text' size='50' maxlength='36' id='{$name}' name='{$name}' value=" . ($value !== null ? esc_attr($value) : '') . '>';
+        echo "<input type='button' class='button button-secondary' id='api_key_checker' value='Validate'>";
     }
 
     public function wingu_settings_display_preference($name) : void
@@ -291,18 +334,18 @@ class WinguAdmin
         echo
         "<label>
          <input type='radio' name='{$name}' value='content' " . checked('content',
-                $value, true) . '>' . __('Content', Wingu::name()) .
+                $value, false) . '>' . __('Content', Wingu::name()) .
         "</label>
          <label>
          <input type='radio' name='{$name}' value='excerpt' " . checked('excerpt',
-                $value, true) . '>' . __('Excerpt', Wingu::name()) .
+                $value, false) . '>' . __('Excerpt', Wingu::name()) .
         '</label>';
     }
 
     public function wingu_settings_link_back($name) : void
     {
         $value = get_option($name);
-        echo "<input type='checkbox' id='{$name}' name='{$name}' value='true'" . checked('true', $value, true) . '>';
+        echo "<input type='checkbox' id='{$name}' name='{$name}' value='true' " . checked('true', $value, false) . '>';
     }
 
     public function wingu_settings_link_back_text($name) : void
