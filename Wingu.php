@@ -14,9 +14,9 @@ declare(strict_types=1);
  * Text Domain: wingu-wordpress-plugin
  * */
 
+use Wingu\Plugin\Wordpress\Wingu;
 use Wingu\Plugin\Wordpress\WinguActivator;
 use Wingu\Plugin\Wordpress\WinguDeactivator;
-use Wingu\Plugin\Wordpress\Wingu;
 
 if (! defined('ABSPATH')) {
     exit;
@@ -44,10 +44,4 @@ function deactivate_wingu()
 register_activation_hook(__FILE__, 'activate_wingu');
 register_deactivation_hook(__FILE__, 'deactivate_wingu');
 
-
-function run_wingu()
-{
-    Wingu::instance()->run();
-}
-
-run_wingu();
+Wingu::instance()->run();

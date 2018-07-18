@@ -1,18 +1,18 @@
 jQuery(document).ready(function($) {
-    $('#submit').hide();
+    let $submit = $('#submit');
+    $submit.hide();
     $("#api_key_checker").click(function() {
         $.get(ajaxurl, {
-            // _ajax_nonce: my_ajax_obj.nonce,     //nonce
-            action: "check_api_key",            //action
-            apikey: $("#wingu_setting_api_key").val()                 //data
-        }, function(data) {                    //callback
+            action: "check_api_key",
+            apikey: $("#wingu_setting_api_key").val()
+        }, function(data) {
             if (data === 'Invalid') {
-                $('#submit').prop('disabled', true);//insert server response
-                // $("#triggers_tab").attr('href', '').css({'cursor': 'not-allowed'});
+                $submit.prop('disabled', true);
+                $("#wingu_setting_api_key").css('border-color', 'red');
             } else {
-                $('#submit').show();
-                $('#submit').prop('disabled', false);
-                // $("#triggers_tab").attr('href', '?page=wingu-options&tab=triggers').css({'cursor': 'default'});
+                $submit.show();
+                $submit.prop('disabled', false);
+                $("#wingu_setting_api_key").css('border-color', 'green');
             }
         });
     });

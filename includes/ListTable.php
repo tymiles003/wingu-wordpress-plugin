@@ -12,7 +12,6 @@ namespace Wingu\Plugin\Wordpress;
  */
 class ListTable
 {
-
     /**
      * The current list of items.
      *
@@ -178,7 +177,7 @@ class ListTable
      */
     public function __get($name)
     {
-        if (\in_array($name, $this->compat_fields)) {
+        if (\in_array($name, $this->compat_fields, true)) {
             return $this->$name;
         }
     }
@@ -194,7 +193,7 @@ class ListTable
      */
     public function __set($name, $value)
     {
-        if (\in_array($name, $this->compat_fields)) {
+        if (\in_array($name, $this->compat_fields, true)) {
             return $this->$name = $value;
         }
     }
@@ -288,7 +287,7 @@ class ListTable
         }
 
         // Redirect if page number is invalid and headers are not already sent.
-        if (! headers_sent() && ! wp_doing_ajax() && $args['total_pages'] > 0 && $this->get_pagenum() > $args['total_pages']) {
+        if ($args['total_pages'] > 0 && !headers_sent() && !wp_doing_ajax() && $this->get_pagenum() > $args['total_pages']) {
             wp_redirect(add_query_arg('paged', $args['total_pages']));
             exit;
         }
@@ -420,7 +419,7 @@ class ListTable
             $views[$class] = "\t<li class='$class'>$view";
         }
         echo implode(" |</li>\n", $views) . "</li>\n";
-        echo "</ul>";
+        echo '</ul>';
     }
 
     /**
@@ -757,7 +756,7 @@ class ListTable
          *
          * @param int $per_page Number of items to be displayed. Default 20.
          */
-        return (int) apply_filters("{$option}", $per_page);
+        return (int) apply_filters((string) $option, $per_page);
     }
 
     /**
@@ -780,7 +779,7 @@ class ListTable
             $infinite_scroll = $this->_pagination_args['infinite_scroll'];
         }
 
-        if ('top' === $which && $total_pages > 1) {
+        if ($which === 'top' && $total_pages > 1) {
             $this->screen->render_screen_reader_content('heading_pagination');
         }
 
@@ -836,7 +835,7 @@ class ListTable
             );
         }
 
-        if ('bottom' === $which) {
+        if ($which === 'bottom') {
             $html_current_page  = $current;
             $total_pages_before = '<span class="screen-reader-text">' . __('Current Page') . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
         } else {
@@ -1004,7 +1003,7 @@ class ListTable
     protected function get_column_info() : array
     {
         // $_column_headers is already set / cached
-        if (isset($this->_column_headers) && is_array($this->_column_headers)) {
+        if ($this->_column_headers !== null && \is_array($this->_column_headers)) {
             // Back-compat for list tables that have been manually setting $_column_headers for horse reasons.
             // In 4.3, we added a fourth argument for primary column.
             $column_headers = [[], [], [], $this->get_primary_column_name()];
@@ -1062,7 +1061,7 @@ class ListTable
     {
         list ($columns, $hidden) = $this->get_column_info();
         $hidden = array_intersect(array_keys($columns), array_filter($hidden));
-        return count($columns) - count($hidden);
+        return \count($columns) - \count($hidden);
     }
 
     /**
@@ -1087,10 +1086,10 @@ class ListTable
             $current_orderby = '';
         }
 
-        if (isset($_GET['order']) && 'desc' === $_GET['order']) {
-            $current_order = 'desc';
+        if (isset($_GET['order']) && $_GET['order'] === 'DESC') {
+            $current_order = 'DESC';
         } else {
-            $current_order = 'asc';
+            $current_order = 'ASC';
         }
 
         if (! empty($columns['cb'])) {
@@ -1121,21 +1120,21 @@ class ListTable
                 list($orderby, $desc_first) = $sortable[$column_key];
 
                 if ($current_orderby === $orderby) {
-                    $order   = $current_order === 'asc' ? 'desc' : 'asc';
+                    $order   = $current_order === 'ASC' ? 'DESC' : 'ASC';
                     $class[] = 'sorted';
                     $class[] = $current_order;
                 } else {
-                    $order   = $desc_first ? 'desc' : 'asc';
+                    $order   = $desc_first ? 'DESC' : 'ASC';
                     $class[] = 'sortable';
-                    $class[] = $desc_first ? 'asc' : 'desc';
+                    $class[] = $desc_first ? 'ASC' : 'DESC';
                 }
 
                 $column_display_name = '<a href="' . esc_url(add_query_arg(compact('orderby', 'order'),
-                        $current_url)) . '"><span>' . $column_display_name . '</span><span class="sorting-indicator"></span></a>';
+                        $current_url)) . '"><span>' . $column_display_name . '</span><span class="dashicons ' . ($current_order === 'ASC' ? 'dashicons-arrow-up' : 'dashicons-arrow-down') . '"></span></a>';
             }
 
-            $tag   = ('cb' === $column_key) ? 'td' : 'th';
-            $scope = ('th' === $tag) ? 'scope="col"' : '';
+            $tag   = ($column_key === 'cb') ? 'td' : 'th';
+            $scope = ($tag === 'th') ? 'scope="col"' : '';
             $id    = $with_id ? "id='$column_key'" : '';
 
             if (! empty($class)) {
@@ -1311,7 +1310,7 @@ class ListTable
                 $classes .= ' has-row-actions column-primary';
             }
 
-            if (in_array($column_name, $hidden, true)) {
+            if (\in_array($column_name, $hidden, true)) {
                 $classes .= ' hidden';
             }
 
@@ -1372,10 +1371,10 @@ class ListTable
         $this->prepare_items();
 
         ob_start();
-        if (! empty($_REQUEST['no_placeholder'])) {
-            $this->display_rows();
-        } else {
+        if (empty($_REQUEST['no_placeholder'])) {
             $this->display_rows_or_placeholder();
+        } else {
+            $this->display_rows();
         }
 
         $rows = ob_get_clean();
@@ -1388,6 +1387,7 @@ class ListTable
                 number_format_i18n($this->_pagination_args['total_items'])
             );
         }
+
         if (isset($this->_pagination_args['total_pages'])) {
             $response['total_pages']      = $this->_pagination_args['total_pages'];
             $response['total_pages_i18n'] = number_format_i18n($this->_pagination_args['total_pages']);
@@ -1403,7 +1403,7 @@ class ListTable
     public function _js_vars() : void
     {
         $args = [
-            'class' => get_class($this),
+            'class' => \get_class($this),
             'screen' => [
                 'id' => $this->screen->id,
                 'base' => $this->screen->base,

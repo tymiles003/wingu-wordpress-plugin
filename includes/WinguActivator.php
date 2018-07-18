@@ -6,7 +6,6 @@ namespace Wingu\Plugin\Wordpress;
 
 class WinguActivator
 {
-
     public static function activate() : void
     {
         if (!current_user_can('activate_plugins')) {

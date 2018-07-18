@@ -15,6 +15,11 @@ use Wingu\Engine\SDK\Model\Response\Channel\QrCode\PrivateQrCode;
 
 class WinguAdmin
 {
+    private const GEOFENCE = 'Geofence';
+    private const QRCODE = 'QR Code';
+    private const NFC = 'NFC';
+    private const BEACON = 'Beacon';
+
     /** @var string */
     private $name;
 
@@ -34,12 +39,15 @@ class WinguAdmin
 
     public function enqueue_styles() : void
     {
+        wp_enqueue_style('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css' );
+        wp_enqueue_style('jquery-ui','https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css');
     }
 
     public function enqueue_scripts() : void
     {
-        wp_enqueue_script('ajax-apikey-checker', plugins_url(Wingu::name() . '/admin/js/checkApiKey.js'), ['jquery']);
-//        $apikey_nonce = wp_create_nonce('wingu_api_key');
+        wp_enqueue_script('ajax-apikey-checker', plugins_url(Wingu::name() . '/admin/js/checkApiKey.js'), ['jquery', 'jquery-ui-tabs']);
+        wp_enqueue_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', ['jquery'] );
+        wp_enqueue_script('wingu-select2', plugins_url(Wingu::name() . '/admin/js/winguSelect2.js'), [ 'jquery', 'select2' ]);
     }
 
     public function check_api_key() : void
@@ -79,8 +87,6 @@ class WinguAdmin
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
-//        $winguChannelApi = Wingu::$API->channel();
-
         $activeTab = $_GET['tab'] ?? 'settings';
         ?>
         <h2 class="nav-tab-wrapper">
@@ -101,44 +107,19 @@ class WinguAdmin
         <h2>Triggers</h2>
         <ol>
         <?php
-//        $data = [];
-//        try {
-//            $response = $winguChannelApi->myChannels();
-//            $response->current();
-//            $i = 0;
-//            while ($response->valid()) {
-//                $channelname = $response->current()->name();
-//                $type        = \get_class($response->current());
-//                $channeltype = null;
-//                switch ($type) {
-//                    case PrivateGeofence::class:
-//                        $channeltype = 'Geofence';
-//                        break;
-//                    case PrivateQrCode::class:
-//                        $channeltype = 'QrCode';
-//                        break;
-//                    case PrivateNfc::class:
-//                        $channeltype = 'Nfc';
-//                        break;
-//                    case PrivateBeacon::class:
-//                        $channeltype = 'Beacon';
-//                        break;
-//                }
-//                $data[] = [
-//                        'id' => $response->current()->id(),
-//                        'name' => $channelname,
-//                        'type' => $channeltype,
-//                        ];
-////                echo '<li>' . $channelname . ': ' . $channeltype . '</li>';
-//                $response->next();
-////                $i++;
-//            }
-
         try {
             $test = new WinguListTable();
             $test->prepare_items();
+            ?>
+            <form id="triggers-filter" method="get">
+            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+            <input type="hidden" name="tab" value="triggers" />
+            <?php
+            $test->search_box('Search', 'search');
             $test->display();
-            update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'true');
+            ?>
+            </form>
+            <?php
         } catch (Unauthorized $exception) {
             update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'false');
         }
@@ -158,6 +139,7 @@ class WinguAdmin
     public function add_wingu_post_meta_box($post) : void
     {
         $winguChannelApi = Wingu::$API->channel();
+        $winguContentApi = Wingu::$API->content();
 
         if (! current_user_can('edit_others_posts')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -170,7 +152,6 @@ class WinguAdmin
 
         wp_nonce_field(plugin_basename(__FILE__), 'wingu_nonce');
 
-        echo '<p>' . _e('Display') . '</p>';
         $displayPreference = $this->compareValues($post->ID, Wingu::POST_KEY_DISPLAY_PREFERENCE, Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
         $linkBack          = $this->compareValues($post->ID, Wingu::POST_KEY_LINK_BACK, Wingu::GLOBAL_KEY_LINK_BACK);
         ?>
@@ -181,45 +162,79 @@ class WinguAdmin
         <br>
         <label for="wingu_post_link_back"><input type="checkbox" name="wingu_post_link_back" value="true" <?php checked('true',
         $linkBack, true); ?>>Link back</label>
-        <br>
+        <br /><br />
+          <label><input type="radio" name="wingu_post_choice" value="new-content" checked>Create new Content and link to Trigger</label><br />
+          <label><input type="radio" name="wingu_post_choice" value="existing-content">Add to existing Content</label>
+          <div>
 		<select id="wingu_post_triggers" name="wingu_post_triggers[]" multiple>
             <?php
             try {
                 $response = $winguChannelApi->myChannels();
                 $response->current();
-                $i                = 0;
                 $current_triggers = get_post_meta($post->ID, Wingu::POST_KEY_TRIGGERS, true);
-                while ($response->valid() && $i < 7) {
+                $all_triggers = [];
+                while ($response->valid()) {
                     $channelid   = $response->current()->id();
                     $channelname = $response->current()->name();
                     $type        = \get_class($response->current());
                     $channeltype = null;
                     switch ($type) {
                         case PrivateGeofence::class:
-                            $channeltype = 'Geofence';
+                            $all_triggers[self::GEOFENCE][] = new WinguTrigger($channelid, $channelname);
                             break;
                         case PrivateQrCode::class:
-                            $channeltype = 'QrCode';
+                            $all_triggers[self::QRCODE][] = new WinguTrigger($channelid, $channelname);
                             break;
                         case PrivateNfc::class:
-                            $channeltype = 'Nfc';
+                            $all_triggers[self::NFC][] = new WinguTrigger($channelid, $channelname);
                             break;
                         case PrivateBeacon::class:
-                            $channeltype = 'Beacon';
+                            $all_triggers[self::BEACON][] = new WinguTrigger($channelid, $channelname);
                             break;
                     }
-                    echo '<option value="' . $channelid . '" ' . (\in_array($channelid, (array) $current_triggers,
-                            true) ? 'selected' : '') . '>' . $channelname . ': ' . $channeltype . '</option><br>';
                     $response->next();
-                    $i++;
                 }
-                update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'true');
+                ?>
+                <?php foreach ($all_triggers as $type=>$triggers): ?>
+                    <optgroup label="<?php echo $type; ?>">
+                       <?php foreach($triggers as $trigger): ?>
+                        <option value="<?php echo $trigger->id() ?>" <?php if (\in_array($trigger->id(), (array) $current_triggers, true)) { echo 'selected'; }?>><?php echo $trigger->name(); ?></option>
+                         <?php endforeach; ?>
+                    </optgroup>
+            <?php endforeach; ?>
+            <?php
             } catch (Unauthorized $exception) {
                 update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'false');
             }
             ?>
         </select>
-        <p><a href="<?php echo esc_url(get_admin_url() . 'options-general.php?page=wingu-options') ?>" target="_blank"><?php _e('Go to plugin options', Wingu::name()) ?></a></p>
+        </div>
+        <div>
+        <select id="wingu_post_contents" name="wingu_post_contents">
+            <?php
+            try {
+                $response = $winguContentApi->myContents();
+                $response->current();
+                $current_content = get_post_meta($post->ID, Wingu::POST_KEY_CONTENT, true);
+                while ($response->valid()) {
+
+                        if ($response->current()->packs() !== null) {
+                            $deckId = $response->current()->packs()[0]->deck()->id();
+                           $deckTitle = $response->current()->packs()[0]->deck()->title();
+                        } else {
+                            $deckId = 'No ID';
+                            $deckTitle = 'No title';
+                        }
+                        echo '<option value="' . $deckId . '" ' . (($current_content === $deckId) ? 'selected' : '') . '>' . $deckTitle . '</option>';
+                        $response->next();
+                }
+            } catch (Unauthorized $exception) {
+                update_option(Wingu::GLOBAL_KEY_API_IS_VALID, 'false');
+            }
+            ?>
+        </select>
+        </div>
+        <a href="<?php echo esc_url(get_admin_url() . 'options-general.php?page=wingu-options') ?>" target="_blank"><?php _e('Go to plugin options', Wingu::name()) ?></a>
         <?php
     }
 
@@ -261,7 +276,7 @@ class WinguAdmin
     public function wingu_meta_box() : void
     {
         add_meta_box(
-            'wingu_post_metabox', __('Wingu', Wingu::name()), [$this, 'add_wingu_post_meta_box'], ['post', 'page']
+            'wingu_post_metabox', __('Wingu', Wingu::name()), [$this, 'add_wingu_post_meta_box'], ['post', 'page'], 'advanced'
         );
     }
 
@@ -325,7 +340,7 @@ class WinguAdmin
     {
         $value = get_option($name);
         echo "<input type='text' size='50' maxlength='36' id='{$name}' name='{$name}' value=" . ($value !== null ? esc_attr($value) : '') . '>';
-        echo "<input type='button' class='button button-secondary' id='api_key_checker' value='Validate'>";
+        echo "&nbsp;<input type='button' class='button button-secondary' id='api_key_checker' value='Validate'>";
     }
 
     public function wingu_settings_display_preference($name) : void
@@ -365,7 +380,9 @@ class WinguAdmin
     {
         if ($column === 'wingu') {
             $triggers = get_post_meta($postId, Wingu::POST_KEY_TRIGGERS, true);
-            echo '<input type="checkbox" disabled', (!empty($triggers) ? ' checked' : ''), '/>';
+            if (!empty($triggers)) {
+                echo '<img height="40" width="40" src="' . plugins_url(Wingu::name() . '/admin/wingu.jpg') . '">';
+            }
         }
     }
 
@@ -399,13 +416,145 @@ class WinguAdmin
             return;
         }
 
-        $createdComponent = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
-        $createdDeck      = $winguApi->deck()->createDeck(new \Wingu\Engine\SDK\Model\Request\Deck\Deck($updatedPost->title,
-            null, null));
-        $template         = $winguApi->contentTemplate()->templates()->current()->id();
-        $createdContent   = $winguApi->content()->createContent(new \Wingu\Engine\SDK\Model\Request\Content\PrivateContent($template));
-        $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponent->id(), 0));
-        $winguApi->content()->attachMyContentToChannelsExclusively($createdContent->id(),
-            new PrivateContentChannels($_POST['wingu_post_triggers']));
+        if (!isset($_POST['wingu_post_choice'])) {
+            return;
+        }
+
+        if ($_POST['wingu_post_choice'] === 'new-content') {
+            $createdComponent = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+            $createdDeck      = $winguApi->deck()->createDeck(new \Wingu\Engine\SDK\Model\Request\Deck\Deck($updatedPost->title, null, null));
+            $template         = $winguApi->contentTemplate()->templates()->current()->id();
+            $createdContent   = $winguApi->content()->createContent(new \Wingu\Engine\SDK\Model\Request\Content\PrivateContent($template));
+            $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponent->id(), 0));
+            $winguApi->content()->attachMyContentToChannelsExclusively($createdContent->id(), new PrivateContentChannels($_POST['wingu_post_triggers']));
+        } elseif ($_POST['wingu_post_choice'] === 'existing-content') {
+            $createdComponent = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+            $winguApi->card()->addCardToDeck(new RequestCard($_POST['wingu_post_contents'], $createdComponent->id(), 0));
+        }
+
+
+    }
+
+    public function wingu_portal_unlink_triggers(): void {
+        if(!isset($_POST['unlinked_triggers'])) {
+          return;
+        }
+
+        $input = file_get_contents('php://input');
+        $json  = json_decode($input);
+
+        if($json->id) {
+
+        }
+    }
+
+    public function _ajax_fetch_wingu_triggers_callback() : void
+    {
+        $wingu_triggers_table = new WinguListTable();
+        $wingu_triggers_table->ajax_response();
+    }
+
+    public function ajax_script() : void
+    {
+        ?>
+        <script type="text/javascript">
+
+        jQuery(function($) {
+            list = {
+                init: function() {
+		var timer;
+		var delay = 500;
+
+		// Pagination links, sortable link
+		$('.tablenav-pages a, .manage-column.sortable a, .manage-column.sorted a').on('click', function(e) {
+			e.preventDefault();
+			var query = this.search.substring( 1 );
+
+			var data = {
+				paged: list.__query( query, 'paged' ) || '1',
+				order: list.__query( query, 'order' ) || 'ASC',
+				orderby: list.__query( query, 'orderby' ) || 'name',
+				s: list.__query( query, 's' ) || '',
+			};
+			list.update( data );
+		});
+
+		// Page number input
+		$('input[name=paged]').on('keyup', function(e) {
+			if ( 13 == e.which )
+				e.preventDefault();
+
+			// This time we fetch the variables in inputs
+			var data = {
+				paged: parseInt( $('input[name=paged]').val() ) || '1',
+				order: $('input[name=order]').val() || 'ASC',
+				orderby: $('input[name=orderby]').val() || 'name'
+			};
+
+			window.clearTimeout( timer );
+			timer = window.setTimeout(function() {
+				list.update( data );
+			}, delay);
+		});
+	},
+
+	update: function( data ) {
+		$.ajax({
+			url: ajaxurl,
+			data: $.extend(
+				{
+					_ajax_wingu_triggers_nonce: $('#_ajax_wingu_triggers_nonce').val(),
+					action: '_ajax_fetch_wingu_triggers',
+				},
+				data
+			),
+			// Handle the successful result
+			success: function( response ) {
+
+				var response = $.parseJSON( response );
+
+				if ( response.rows.length )
+					$('#the-list').html( response.rows );
+				if ( response.column_headers.length )
+					$('thead tr, tfoot tr').html( response.column_headers );
+				if ( response.pagination.bottom.length )
+					$('.tablenav.top .tablenav-pages').html( $(response.pagination.top).html() );
+				if ( response.pagination.top.length )
+					$('.tablenav.bottom .tablenav-pages').html( $(response.pagination.bottom).html() );
+
+				list.init();
+			}
+		});
+	},
+
+	/**
+	 * Filter the URL Query to extract variables
+	 *
+	 * @see http://css-tricks.com/snippets/javascript/get-url-variables/
+	 *
+	 * @param    string    query The URL query part containing the variables
+	 * @param    string    variable Name of the variable we want to get
+	 *
+	 * @return   string|boolean The variable value if available, false else.
+	 */
+	__query: function( query, variable ) {
+
+		var vars = query.split("&");
+		for ( var i = 0; i <vars.length; i++ ) {
+			var pair = vars[ i ].split("=");
+			if ( pair[0] == variable )
+				return pair[1];
+		}
+		return false;
+	},
+};
+
+// Show time!
+list.init();
+
+});
+</script>
+
+        <?php
     }
 }

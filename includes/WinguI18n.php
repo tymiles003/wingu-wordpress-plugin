@@ -27,6 +27,4 @@ class WinguI18n
     {
         return $this->domain;
     }
-
-
 }

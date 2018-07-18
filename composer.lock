@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d17932fdaab77936d05ce169aa65b1bb",
+    "content-hash": "60025e93e173c0a0053bb0e13707cf4b",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -548,12 +548,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/message.git",
-                "reference": "dafefdbe7773980e2a3e8ada5eeb4fd3d168b642"
+                "reference": "5e187c0a6072c0b5afb833ecfdf0b0269adfef29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/message/zipball/dafefdbe7773980e2a3e8ada5eeb4fd3d168b642",
-                "reference": "dafefdbe7773980e2a3e8ada5eeb4fd3d168b642",
+                "url": "https://api.github.com/repos/php-http/message/zipball/5e187c0a6072c0b5afb833ecfdf0b0269adfef29",
+                "reference": "5e187c0a6072c0b5afb833ecfdf0b0269adfef29",
                 "shasum": ""
             },
             "require": {
@@ -612,7 +612,7 @@
                 "message",
                 "psr-7"
             ],
-            "time": "2018-05-08T13:31:38+00:00"
+            "time": "2018-07-09T10:28:18+00:00"
         },
         {
             "name": "php-http/message-factory",
@@ -878,12 +878,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "6e17163fca40eaa8ca76dee8be8f3856a3d40bb7"
+                "reference": "6d8a0d18db8fcdcf900e84e9d4c40836e9096a38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/6e17163fca40eaa8ca76dee8be8f3856a3d40bb7",
-                "reference": "6e17163fca40eaa8ca76dee8be8f3856a3d40bb7",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/6d8a0d18db8fcdcf900e84e9d4c40836e9096a38",
+                "reference": "6d8a0d18db8fcdcf900e84e9d4c40836e9096a38",
                 "shasum": ""
             },
             "require": {
@@ -915,7 +915,8 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2018-06-14T16:15:07+00:00"
+            "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
+            "time": "2018-07-02T19:36:08+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1250,12 +1251,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-info.git",
-                "reference": "c8b51f307a3ae90c117d642f2e9584fc73039e5a"
+                "reference": "26c9f63d26f0794a1630de287be3838c12e3f928"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-info/zipball/c8b51f307a3ae90c117d642f2e9584fc73039e5a",
-                "reference": "c8b51f307a3ae90c117d642f2e9584fc73039e5a",
+                "url": "https://api.github.com/repos/symfony/property-info/zipball/26c9f63d26f0794a1630de287be3838c12e3f928",
+                "reference": "26c9f63d26f0794a1630de287be3838c12e3f928",
                 "shasum": ""
             },
             "require": {
@@ -1264,7 +1265,7 @@
             },
             "conflict": {
                 "phpdocumentor/reflection-docblock": "<3.0||>=3.2.0,<3.2.2",
-                "phpdocumentor/type-resolver": "<0.2.1",
+                "phpdocumentor/type-resolver": "<0.3.0",
                 "symfony/dependency-injection": "<3.4"
             },
             "require-dev": {
@@ -1318,7 +1319,7 @@
                 "type",
                 "validator"
             ],
-            "time": "2018-06-26T16:34:11+00:00"
+            "time": "2018-07-07T16:01:39+00:00"
         },
         {
             "name": "symfony/serializer",
@@ -1326,12 +1327,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/serializer.git",
-                "reference": "94fe6f679a27d985574e22e76363452afd29b472"
+                "reference": "f7bf4c1de6b162fc63b266cf0111036adadfea73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/serializer/zipball/94fe6f679a27d985574e22e76363452afd29b472",
-                "reference": "94fe6f679a27d985574e22e76363452afd29b472",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/f7bf4c1de6b162fc63b266cf0111036adadfea73",
+                "reference": "f7bf4c1de6b162fc63b266cf0111036adadfea73",
                 "shasum": ""
             },
             "require": {
@@ -1398,7 +1399,7 @@
             ],
             "description": "Symfony Serializer Component",
             "homepage": "https://symfony.com",
-            "time": "2018-06-27T21:06:44+00:00"
+            "time": "2018-07-03T20:17:49+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -1452,16 +1453,16 @@
         },
         {
             "name": "wingu/wingu-sdk-php",
-            "version": "dev-master",
+            "version": "dev-channels_filters",
             "source": {
                 "type": "git",
                 "url": "git@github.com:wingu-GmbH/wingu-sdk-php.git",
-                "reference": "4ec0b5a13a04340cac210ba8072a6ca5ef11f3ac"
+                "reference": "f8b53da64fb9aed3098440db87baf4ec248fe9ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/4ec0b5a13a04340cac210ba8072a6ca5ef11f3ac",
-                "reference": "4ec0b5a13a04340cac210ba8072a6ca5ef11f3ac",
+                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/f8b53da64fb9aed3098440db87baf4ec248fe9ea",
+                "reference": "f8b53da64fb9aed3098440db87baf4ec248fe9ea",
                 "shasum": ""
             },
             "require": {
@@ -1531,10 +1532,10 @@
             ],
             "description": "wingu engine PHP SDK",
             "support": {
-                "source": "https://github.com/wingu-GmbH/wingu-sdk-php/tree/master",
+                "source": "https://github.com/wingu-GmbH/wingu-sdk-php/tree/channels_filters",
                 "issues": "https://github.com/wingu-GmbH/wingu-sdk-php/issues"
             },
-            "time": "2018-06-29T10:08:58+00:00"
+            "time": "2018-07-11T07:56:57+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -1542,12 +1543,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "7ab5bcfcfe08958cd70ab10ce28665fca2d685db"
+                "reference": "5bc6ac3d0825602551ed6906b56b5aaec7d55d4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/7ab5bcfcfe08958cd70ab10ce28665fca2d685db",
-                "reference": "7ab5bcfcfe08958cd70ab10ce28665fca2d685db",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/5bc6ac3d0825602551ed6906b56b5aaec7d55d4e",
+                "reference": "5bc6ac3d0825602551ed6906b56b5aaec7d55d4e",
                 "shasum": ""
             },
             "require": {
@@ -1597,7 +1598,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-06-27T19:15:45+00:00"
+            "time": "2018-07-09T21:20:01+00:00"
         }
     ],
     "packages-dev": [],

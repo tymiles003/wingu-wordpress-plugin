@@ -24,6 +24,8 @@ class Wingu
     public const POST_KEY_DISPLAY_PREFERENCE = '_wingu_post_display_preference';
     public const POST_KEY_LINK_BACK          = '_wingu_post_link_back';
     public const POST_KEY_TRIGGERS           = '_wingu_post_triggers';
+    public const POST_KEY_CONTENT            = '_wingu_post_content';
+    public const DEV = 'http://wingu';
 
     /** @var WinguLoader */
     protected $loader;
@@ -43,14 +45,14 @@ class Wingu
         } else {
             $this::$version = '1.0.0';
         }
-        $this::$name   = 'wingu-wordpress-plugin';
+        $this::$name  = 'wingu-wordpress-plugin';
         $this->loader = new WinguLoader();
         $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
         $messageFactory = new GuzzleMessageFactory();
-        self::$API = new WinguApi(
-            new Configuration((string) get_option(self::GLOBAL_KEY_API_KEY), 'http://wingu'),
+        self::$API      = new WinguApi(
+            new Configuration((string) get_option(self::GLOBAL_KEY_API_KEY), Configuration::BACKEND_URL_SANDBOX),
             new Client($messageFactory),
             $messageFactory,
             new SymfonySerializerHydrator());
@@ -59,8 +61,8 @@ class Wingu
     public static function refreshApiKey() : void
     {
         $messageFactory = new GuzzleMessageFactory();
-        self::$API = new WinguApi(
-            new Configuration((string) get_option(self::GLOBAL_KEY_API_KEY), 'http://wingu'),
+        self::$API      = new WinguApi(
+            new Configuration((string) get_option(self::GLOBAL_KEY_API_KEY), Configuration::BACKEND_URL_SANDBOX),
             new Client($messageFactory),
             $messageFactory,
             new SymfonySerializerHydrator());
@@ -68,7 +70,7 @@ class Wingu
 
     public static function instance() : Wingu
     {
-        if ( self::$instance === null) {
+        if (self::$instance === null) {
             self::$instance = new self;
         }
         return self::$instance;
@@ -87,16 +89,19 @@ class Wingu
         $plugin_name = self::$name . '/' . basename(__FILE__);
         $wingu_admin = new WinguAdmin(self::name(), self::version());
         $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
-        $this->loader->add_action('admin_notices', $wingu_admin, 'api_key_notice' );
+        $this->loader->add_action('admin_notices', $wingu_admin, 'api_key_notice');
         $this->loader->add_action('admin_init', $wingu_admin, 'wingu_settings_init');
         $this->loader->add_filter('plugin_action_links_' . $plugin_name, $wingu_admin, 'wingu_settings_link');
-        $this->loader->add_action('manage_posts_custom_column' , $wingu_admin, 'wingu_custom_posts_column', 10, 2);
-        $this->loader->add_filter('manage_posts_columns' , $wingu_admin, 'add_wingu_posts_column');
+        $this->loader->add_action('manage_posts_custom_column', $wingu_admin, 'wingu_custom_posts_column', 10, 2);
+        $this->loader->add_action('manage_pages_custom_column', $wingu_admin, 'wingu_custom_posts_column', 10, 2);
+        $this->loader->add_filter('manage_posts_columns', $wingu_admin, 'add_wingu_posts_column');
+        $this->loader->add_filter('manage_pages_columns', $wingu_admin, 'add_wingu_posts_column');
         $this->loader->add_action('add_meta_boxes', $wingu_admin, 'wingu_meta_box');
         $this->loader->add_action('post_updated', $wingu_admin, 'wingu_post_updated', 50, 2);
         $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta', 100);
-        $this->loader->add_action( 'wp_ajax_check_api_key', $wingu_admin, 'check_api_key');
-
+        $this->loader->add_action('wp_ajax_check_api_key', $wingu_admin, 'check_api_key');
+        $this->loader->add_action('wp_ajax__ajax_fetch_wingu_triggers', $wingu_admin, '_ajax_fetch_wingu_triggers_callback');
+        $this->loader->add_action('admin_footer', $wingu_admin, 'ajax_script');
 
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_scripts');
