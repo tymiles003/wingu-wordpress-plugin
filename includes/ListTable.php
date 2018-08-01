@@ -365,6 +365,12 @@ class ListTable
         if (! empty($_REQUEST['detached'])) {
             echo '<input type="hidden" name="detached" value="' . esc_attr($_REQUEST['detached']) . '" />';
         }
+//        unset($_REQUEST['paged']);
+//        remove_query_arg('paged');
+//        add_query_arg('paged', 1);
+//        $_REQUEST['paged'] = 1;
+        echo '<input type="hidden" name="paged" value="1" />';
+
         ?>
         <p class="search-box">
             <label class="screen-reader-text" for="<?php echo esc_attr($input_id); ?>"><?php echo $text; ?>:</label>
@@ -718,7 +724,7 @@ class ListTable
      */
     public function get_pagenum() : int
     {
-        $pagenum = isset($_REQUEST['paged']) ? absint($_REQUEST['paged']) : 0;
+        $pagenum = isset($_REQUEST['paged']) ? absint($_REQUEST['paged']) : 1;
 
         if (isset($this->_pagination_args['total_pages']) && $pagenum > $this->_pagination_args['total_pages']) {
             $pagenum = $this->_pagination_args['total_pages'];

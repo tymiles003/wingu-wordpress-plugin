@@ -12,8 +12,9 @@ class WinguActivator
             return;
         }
 
-        if (!get_option(Wingu::GLOBAL_KEY_API_IS_VALID)) {
-            update_option(Wingu::GLOBAL_KEY_API_IS_VALID, false);
+        if (!get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID)) {
+            update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, false);
         }
+        update_option(Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE, 'content');
     }
 }

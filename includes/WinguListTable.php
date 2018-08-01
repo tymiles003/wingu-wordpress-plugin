@@ -6,11 +6,14 @@ namespace Wingu\Plugin\Wordpress;
 
 use Wingu\Engine\SDK\Model\Request\Channel\PrivateChannelsFilter;
 use Wingu\Engine\SDK\Model\Request\Channel\PrivateChannelsSorting;
+use Wingu\Engine\SDK\Model\Request\PaginationParameters;
 use Wingu\Engine\SDK\Model\Request\RequestParameters;
 use Wingu\Engine\SDK\Model\Response\Channel\Beacon\PrivateBeacon;
 use Wingu\Engine\SDK\Model\Response\Channel\Geofence\PrivateGeofence;
 use Wingu\Engine\SDK\Model\Response\Channel\Nfc\PrivateNfc;
+use Wingu\Engine\SDK\Model\Response\Channel\PrivateChannel;
 use Wingu\Engine\SDK\Model\Response\Channel\QrCode\PrivateQrCode;
+use Wingu\Engine\SDK\Model\Response\Content\PrivateListContent;
 
 class WinguListTable extends ListTable
 {
@@ -41,11 +44,11 @@ class WinguListTable extends ListTable
     {
         $actions = [];
         if ($item['contentid'] === null) {
-            $actions['link'] = sprintf('<a href="?page=%s&action=%s&trigger=%s&content=%s">Link</a>', $_REQUEST['page'],
-                'link', $item['id'], $item['contentid']);
+            $actions['link'] = sprintf('<a href="?page=%s&tab=%s&action=%s&trigger=%s&$type=%s&content=%s">Link</a>',
+                $_GET['page'], 'link', 'link', $item['id'], $item['type'], +$item['contentid']);
         } else {
-            $actions['unlink'] = sprintf('<a href="?page=%s&action=%s&trigger=%s&content=%s">Unlink</a>',
-                $_REQUEST['page'], 'unlink', $item['id'], $item['contentid']);
+            $actions['unlink'] = sprintf('<a href="?page=%s&tab=%s&action=%s&trigger=%s&$type=%s&content=%s">Unlink</a>',
+                $_GET['page'], 'link', 'unlink', $item['id'], $item['type'], $item['contentid']);
         }
 
         return sprintf('%1$s %2$s',
@@ -58,7 +61,6 @@ class WinguListTable extends ListTable
     {
         $sortable_columns = [
             'name' => ['name', true],
-            'type' => ['type', false],
         ];
         return $sortable_columns;
     }
@@ -81,19 +83,30 @@ class WinguListTable extends ListTable
         $sortable              = $this->get_sortable_columns();
         $this->_column_headers = [$columns, $hidden, $sortable];
 
+        $paginationParameters = null;
+        $filters = null;
+        $sorting = null;
+
         if (isset($_GET['s'])) {
-            $data                  = $this->winguChannelApiQuery(new PrivateChannelsFilter(null, $_GET['s']),
-                new PrivateChannelsSorting(null, RequestParameters::SORTING_ORDER_ASC));
-            usort($data, [$this, 'usort_reorder']);
-        } else {
-            $data = $this->winguChannelApiQuery(null,
-                new PrivateChannelsSorting(null, RequestParameters::SORTING_ORDER_ASC));
-            usort($data, [$this, 'usort_reorder']);
+            $filters = new PrivateChannelsFilter(null, \urldecode($_GET['s']));
         }
 
-        $current_page = $this->get_pagenum();
-        $total_items  = \count($data);
-        $data         = \array_slice($data, ($current_page - 1) * $per_page, $per_page);
+        if (isset($_GET['paged'])) {
+            $paginationParameters = new PaginationParameters((int)$_GET['paged'], $per_page);
+        } else {
+            $paginationParameters = new PaginationParameters(1, $per_page);
+        }
+
+        if (isset($_REQUEST['orderby'], $_REQUEST['order'])) {
+            if ($_REQUEST['orderby'] === 'name') {
+                $sorting = new PrivateChannelsSorting(null, $_REQUEST['order']);
+            }
+        } else {
+            $sorting = new PrivateChannelsSorting(null, RequestParameters::SORTING_ORDER_ASC);
+        }
+
+        list($data, $total_items)  = $this->winguChannelApiQuery($paginationParameters, $filters, $sorting);
+
         $this->items  = $data;
 
         $this->set_pagination_args([
@@ -106,61 +119,51 @@ class WinguListTable extends ListTable
     }
 
     /** @return mixed[] */
-    private function winguChannelApiQuery(
+    private function winguChannelApiQuery(PaginationParameters $paginationParameters,
         ?PrivateChannelsFilter $filters = null,
         ?PrivateChannelsSorting $sorting = null
     ) : array {
         $winguChannelApi = Wingu::$API->channel();
         $data            = [];
 
-        $response = $winguChannelApi->myChannels($filters, $sorting);
-        while ($response->valid()) {
-            $current     = $response->current();
-            $channelname = $current->name();
-            $type        = \get_class($current);
-            $channeltype = null;
-            switch ($type) {
+        $response = $winguChannelApi->myChannelsPage($paginationParameters, $filters, $sorting);
+        $total_items = $response->pageInfo()->total();
+        /** @var PrivateChannel $channel */
+        foreach ($response->embedded() as $channel) {
+            /** @var PrivateListContent $content */
+            $content = $channel->content();
+            $type = null;
+            switch (\get_class($channel)) {
                 case PrivateGeofence::class:
-                    $channeltype = 'Geofence';
+                    $type = 'Geofence';
                     break;
                 case PrivateQrCode::class:
-                    $channeltype = 'QRcode';
+                    $type = 'QRcode';
                     break;
                 case PrivateNfc::class:
-                    $channeltype = 'NFC';
+                    $type = 'NFC';
                     break;
                 case PrivateBeacon::class:
-                    $channeltype = 'Beacon';
+                    $type = 'Beacon';
                     break;
             }
 
             $data[] = [
-                'id' => $current->id(),
-                'name' => $channelname,
-                'type' => $channeltype,
-                'content' => $current->content() ? $current->content()->title() : '<i>No content attached</i>',
-                'contentid' => $current->content() ? $current->content()->id() : null,
+                'id' => $channel->id(),
+                'name' => $channel->name(),
+                'type' => $type,
+                'content' => $content ? $content->title() : '<i>No content attached</i>',
+                'contentid' => $content ? $content->id() : null,
             ];
-
-            $response->next();
         }
 
-        return $data;
-    }
-
-    private function usort_reorder($a, $b)
-    {
-        $orderby = ! empty($_REQUEST['orderby']) ? $_REQUEST['orderby'] : 'name'; //If no sort, default to title
-        $order   = ! empty($_REQUEST['order']) ? $_REQUEST['order'] : 'ASC'; //If no order, default to asc
-        $result  = strnatcmp($a[$orderby], $b[$orderby]); //Determine sort order
-        return ($order === 'ASC') ? $result : -$result; //Send final sort direction to usort
+        return [$data, $total_items];
     }
 
     public function display() : void
     {
 
         wp_nonce_field( 'ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce' );
-
         echo '<input id="order" type="hidden" name="order" value="' . $this->_pagination_args['order'] . '" />';
         echo '<input id="orderby" type="hidden" name="orderby" value="' . $this->_pagination_args['orderby'] . '" />';
 //        if (isset($_REQUEST['s'])) {
@@ -203,10 +206,10 @@ class WinguListTable extends ListTable
         $response['pagination']['bottom'] = $pagination_bottom;
         $response['column_headers'] = $headers;
 
-        if ( isset( $total_items ) )
+        if ($total_items !== null)
             $response['total_items_i18n'] = sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) );
 
-        if ( isset( $total_pages ) ) {
+        if ($total_pages !== null) {
             $response['total_pages'] = $total_pages;
             $response['total_pages_i18n'] = number_format_i18n( $total_pages );
         }

@@ -1,18 +1,20 @@
 jQuery(document).ready(function($) {
     let $submit = $('#submit');
+    let $apikey = $("#wingu_setting_api_key");
     $submit.hide();
     $("#api_key_checker").click(function() {
         $.get(ajaxurl, {
             action: "check_api_key",
-            apikey: $("#wingu_setting_api_key").val()
+            apikey: $apikey.val()
         }, function(data) {
             if (data === 'Invalid') {
+                $submit.hide();
                 $submit.prop('disabled', true);
-                $("#wingu_setting_api_key").css('border-color', 'red');
+                $apikey.css('border-color', 'red');
             } else {
                 $submit.show();
                 $submit.prop('disabled', false);
-                $("#wingu_setting_api_key").css('border-color', 'green');
+                $apikey.css('border-color', 'green');
             }
         });
     });

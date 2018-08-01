@@ -1,21 +1,27 @@
 jQuery(document).ready(function($) {
     let $triggers = $('#wingu_post_triggers');
-    let $contents = $('#wingu_post_contents');
+    let $content = $('#wingu_post_content');
     $triggers.select2({
         width: '100%'
     });
-    $contents.select2({
+    $content.select2({
         width: '100%'
     });
-    $contents.parent().hide();
-    $("input[name=wingu_post_choice]").on("change", function() {
+
+    $content.parent().hide();
+    $triggers.parent().hide();
+
+    $("#wingu_post_choice").on("change", function() {
         let test = $(this).val();
         if (test === 'new-content') {
-            $contents.parent().hide();
             $triggers.parent().show();
+            $content.parent().hide();
         } else if (test === 'existing-content') {
             $triggers.parent().hide();
-            $contents.parent().show();
+            $content.parent().show();
+        } else {
+            $triggers.parent().hide();
+            $content.parent().hide();
         }
     });
 });
