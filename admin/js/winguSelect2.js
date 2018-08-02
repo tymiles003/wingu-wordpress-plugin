@@ -2,7 +2,8 @@ jQuery(document).ready(function($) {
     let $triggers = $('#wingu_post_triggers');
     let $content = $('#wingu_post_content');
     $triggers.select2({
-        width: '100%'
+        width: '100%',
+        // wingu.api_url
     });
     $content.select2({
         width: '100%'

@@ -25,6 +25,7 @@ class Wingu
     public const POST_KEY_LINK_BACK = '_wingu_post_link_back';
     public const POST_KEY_CONTENT = '_wingu_post_content';
     public const POST_KEY_COMPONENT = '_wingu_post_component';
+
     public const DEV = 'http://wingu';
 
     /** @var WinguLoader */
@@ -36,7 +37,11 @@ class Wingu
     /** @var string */
     protected static $version;
 
+    /** @var WinguApi */
     public static $API;
+
+    /** @var string */
+    public static $API_URL;
 
     public function __construct()
     {
@@ -50,20 +55,16 @@ class Wingu
         $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
-        $messageFactory = new GuzzleMessageFactory();
-        self::$API = new WinguApi(
-            new Configuration((string)get_option(self::GLOBAL_KEY_API_KEY), self::DEV),
-            new Client($messageFactory),
-            $messageFactory,
-            new SymfonySerializerHydrator()
-        );
+
+        self::$API_URL = self::DEV;
+        self::refreshApiKey();
     }
 
     public static function refreshApiKey(): void
     {
         $messageFactory = new GuzzleMessageFactory();
         self::$API = new WinguApi(
-            new Configuration((string)get_option(self::GLOBAL_KEY_API_KEY), self::DEV),
+            new Configuration((string)get_option(self::GLOBAL_KEY_API_KEY), self::$API_URL),
             new Client($messageFactory),
             $messageFactory,
             new SymfonySerializerHydrator()
@@ -88,11 +89,12 @@ class Wingu
 
     private function define_admin_hooks(): void
     {
+//        todo: test different variable pluginnames
 //        var_dump(plugin_basename(__FILE__));
         $plugin_name = self::$name.'/'.basename(__FILE__);
         $wingu_admin = new WinguAdmin(self::name(), self::version());
         $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
-        $this->loader->add_action('admin_notices', $wingu_admin, 'api_key_notice');
+        $this->loader->add_action('admin_notices', $wingu_admin, 'wingu_api_key_notice');
         $this->loader->add_action('admin_init', $wingu_admin, 'wingu_settings_init');
         $this->loader->add_filter('plugin_action_links_'.$plugin_name, $wingu_admin, 'wingu_settings_link');
         $this->loader->add_action('manage_posts_custom_column', $wingu_admin, 'wingu_custom_posts_column', 10, 2);
@@ -104,7 +106,7 @@ class Wingu
         $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta', 100);
         $this->loader->add_action('wp_ajax_check_api_key', $wingu_admin, 'check_api_key');
         $this->loader->add_action('wp_ajax__ajax_fetch_wingu_triggers', $wingu_admin, '_ajax_fetch_wingu_triggers_callback');
-        $this->loader->add_action('admin_footer', $wingu_admin, 'ajax_script');
+        $this->loader->add_action('admin_footer', $wingu_admin, 'ajax_trigger_pagination_script');
 
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_scripts');

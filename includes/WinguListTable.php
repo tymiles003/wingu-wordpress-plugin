@@ -45,7 +45,7 @@ class WinguListTable extends ListTable
         $actions = [];
         if ($item['contentid'] === null) {
             $actions['link'] = sprintf('<a href="?page=%s&tab=%s&action=%s&trigger=%s&$type=%s&content=%s">Link</a>',
-                $_GET['page'], 'link', 'link', $item['id'], $item['type'], +$item['contentid']);
+                $_GET['page'], 'link', 'link', $item['id'], $item['type'], $item['contentid']);
         } else {
             $actions['unlink'] = sprintf('<a href="?page=%s&tab=%s&action=%s&trigger=%s&$type=%s&content=%s">Unlink</a>',
                 $_GET['page'], 'link', 'unlink', $item['id'], $item['type'], $item['contentid']);
@@ -59,20 +59,18 @@ class WinguListTable extends ListTable
 
     public function get_sortable_columns() : array
     {
-        $sortable_columns = [
+        return [
             'name' => ['name', true],
         ];
-        return $sortable_columns;
     }
 
     public function get_columns() : array
     {
-        $columns = [
+        return [
             'name' => 'Name',
             'type' => 'Type',
             'content' => 'Content',
         ];
-        return $columns;
     }
 
     public function prepare_items() : void
@@ -84,15 +82,15 @@ class WinguListTable extends ListTable
         $this->_column_headers = [$columns, $hidden, $sortable];
 
         $paginationParameters = null;
-        $filters = null;
-        $sorting = null;
+        $filters              = null;
+        $sorting              = null;
 
         if (isset($_GET['s'])) {
             $filters = new PrivateChannelsFilter(null, \urldecode($_GET['s']));
         }
 
         if (isset($_GET['paged'])) {
-            $paginationParameters = new PaginationParameters((int)$_GET['paged'], $per_page);
+            $paginationParameters = new PaginationParameters((int) $_GET['paged'], $per_page);
         } else {
             $paginationParameters = new PaginationParameters(1, $per_page);
         }
@@ -105,9 +103,9 @@ class WinguListTable extends ListTable
             $sorting = new PrivateChannelsSorting(null, RequestParameters::SORTING_ORDER_ASC);
         }
 
-        list($data, $total_items)  = $this->winguChannelApiQuery($paginationParameters, $filters, $sorting);
+        [$data, $total_items] = $this->winguChannelApiQuery($paginationParameters, $filters, $sorting);
 
-        $this->items  = $data;
+        $this->items = $data;
 
         $this->set_pagination_args([
             'total_items' => $total_items,
@@ -119,20 +117,21 @@ class WinguListTable extends ListTable
     }
 
     /** @return mixed[] */
-    private function winguChannelApiQuery(PaginationParameters $paginationParameters,
+    private function winguChannelApiQuery(
+        PaginationParameters $paginationParameters,
         ?PrivateChannelsFilter $filters = null,
         ?PrivateChannelsSorting $sorting = null
     ) : array {
         $winguChannelApi = Wingu::$API->channel();
         $data            = [];
 
-        $response = $winguChannelApi->myChannelsPage($paginationParameters, $filters, $sorting);
+        $response    = $winguChannelApi->myChannelsPage($paginationParameters, $filters, $sorting);
         $total_items = $response->pageInfo()->total();
         /** @var PrivateChannel $channel */
         foreach ($response->embedded() as $channel) {
             /** @var PrivateListContent $content */
             $content = $channel->content();
-            $type = null;
+            $type    = null;
             switch (\get_class($channel)) {
                 case PrivateGeofence::class:
                     $type = 'Geofence';
@@ -163,7 +162,7 @@ class WinguListTable extends ListTable
     public function display() : void
     {
 
-        wp_nonce_field( 'ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce' );
+        wp_nonce_field('ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce');
         echo '<input id="order" type="hidden" name="order" value="' . $this->_pagination_args['order'] . '" />';
         echo '<input id="orderby" type="hidden" name="orderby" value="' . $this->_pagination_args['orderby'] . '" />';
 //        if (isset($_REQUEST['s'])) {
@@ -173,20 +172,22 @@ class WinguListTable extends ListTable
         parent::display();
     }
 
-    public function ajax_response() : void  {
+    public function ajax_response() : void
+    {
 
-        check_ajax_referer( 'ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce' );
+        check_ajax_referer('ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce');
 
         $this->prepare_items();
 
-        extract( $this->_args );
-        extract( $this->_pagination_args, EXTR_SKIP );
+        extract($this->_args, EXTR_OVERWRITE);
+        extract($this->_pagination_args, EXTR_SKIP);
 
         ob_start();
-        if ( ! empty( $_REQUEST['no_placeholder'] ) )
+        if (! empty($_REQUEST['no_placeholder'])) {
             $this->display_rows();
-        else
+        } else {
             $this->display_rows_or_placeholder();
+        }
         $rows = ob_get_clean();
 
         ob_start();
@@ -201,19 +202,21 @@ class WinguListTable extends ListTable
         $this->pagination('bottom');
         $pagination_bottom = ob_get_clean();
 
-        $response = ['rows' => $rows];
-        $response['pagination']['top'] = $pagination_top;
+        $response                         = ['rows' => $rows];
+        $response['pagination']['top']    = $pagination_top;
         $response['pagination']['bottom'] = $pagination_bottom;
-        $response['column_headers'] = $headers;
+        $response['column_headers']       = $headers;
 
-        if ($total_items !== null)
-            $response['total_items_i18n'] = sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) );
-
-        if ($total_pages !== null) {
-            $response['total_pages'] = $total_pages;
-            $response['total_pages_i18n'] = number_format_i18n( $total_pages );
+        if ($total_items !== null) {
+            $response['total_items_i18n'] = sprintf(_n('1 item', '%s items', $total_items),
+                number_format_i18n($total_items));
         }
 
-        die( json_encode( $response ) );
+        if ($total_pages !== null) {
+            $response['total_pages']      = $total_pages;
+            $response['total_pages_i18n'] = number_format_i18n($total_pages);
+        }
+
+        die(json_encode($response));
     }
 }

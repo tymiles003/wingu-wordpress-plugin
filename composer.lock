@@ -1455,12 +1455,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:wingu-GmbH/wingu-sdk-php.git",
-                "reference": "a7aabd0faac43e892ef2149f1484009178cec74f"
+                "reference": "cb2d93eef4b0e52d7c3e948433c02c8d593e0f26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/a7aabd0faac43e892ef2149f1484009178cec74f",
-                "reference": "a7aabd0faac43e892ef2149f1484009178cec74f",
+                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/cb2d93eef4b0e52d7c3e948433c02c8d593e0f26",
+                "reference": "cb2d93eef4b0e52d7c3e948433c02c8d593e0f26",
                 "shasum": ""
             },
             "require": {
@@ -1533,7 +1533,7 @@
                 "source": "https://github.com/wingu-GmbH/wingu-sdk-php/tree/pagination_parameters",
                 "issues": "https://github.com/wingu-GmbH/wingu-sdk-php/issues"
             },
-            "time": "2018-07-24T15:20:24+00:00"
+            "time": "2018-08-01T14:03:08+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -1541,12 +1541,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "115cd8054a7b704147d62c0f3c3316062f1f35bc"
+                "reference": "6e811632caeaa91e80986405c06bf25c14d506d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/115cd8054a7b704147d62c0f3c3316062f1f35bc",
-                "reference": "115cd8054a7b704147d62c0f3c3316062f1f35bc",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/6e811632caeaa91e80986405c06bf25c14d506d0",
+                "reference": "6e811632caeaa91e80986405c06bf25c14d506d0",
                 "shasum": ""
             },
             "require": {
@@ -1596,7 +1596,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-07-24T21:57:45+00:00"
+            "time": "2018-08-01T13:50:15+00:00"
         }
     ],
     "packages-dev": [],
