@@ -32,6 +32,9 @@ class Wingu
     protected $loader;
 
     /** @var string */
+    protected static $basename;
+
+    /** @var string */
     protected static $name;
 
     /** @var string */
@@ -50,13 +53,18 @@ class Wingu
         } else {
             $this::$version = '1.0.0';
         }
-        $this::$name = 'wingu-wordpress-plugin';
+
+        $this::$basename = plugin_basename(__FILE__);
+        $plugin_basename = explode('/', $this::$basename);
+        $this::$name = $plugin_basename[0];
+//        $this::$name = 'wingu-wordpress-plugin';
+
         $this->loader = new WinguLoader();
         $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
 
-        self::$API_URL = self::DEV;
+        self::$API_URL = Configuration::BACKEND_URL_SANDBOX;
         self::refreshApiKey();
     }
 
@@ -90,8 +98,10 @@ class Wingu
     private function define_admin_hooks(): void
     {
 //        todo: test different variable pluginnames
-//        var_dump(plugin_basename(__FILE__));
-        $plugin_name = self::$name.'/'.basename(__FILE__);
+
+        $plugin_basename = explode('/', $this::$basename);
+        $plugin_name = $plugin_basename[0] . '/' . $plugin_basename[2];
+//        $plugin_name = self::$name.'/'.basename(__FILE__);
         $wingu_admin = new WinguAdmin(self::name(), self::version());
         $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
         $this->loader->add_action('admin_notices', $wingu_admin, 'wingu_api_key_notice');

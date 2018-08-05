@@ -15,3 +15,4 @@ delete_option(Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
 delete_post_meta_by_key(Wingu::POST_KEY_LINK_BACK);
 delete_post_meta_by_key(Wingu::POST_KEY_DISPLAY_PREFERENCE);
 delete_post_meta_by_key(Wingu::POST_KEY_CONTENT);
+delete_post_meta_by_key(Wingu::POST_KEY_COMPONENT);

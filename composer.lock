@@ -1249,12 +1249,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-info.git",
-                "reference": "a703891af3d67bd2c95f3c6ddfdf10316886b225"
+                "reference": "060cf24b7d15f0bfa02d7790d13dc8a8df19a386"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-info/zipball/a703891af3d67bd2c95f3c6ddfdf10316886b225",
-                "reference": "a703891af3d67bd2c95f3c6ddfdf10316886b225",
+                "url": "https://api.github.com/repos/symfony/property-info/zipball/060cf24b7d15f0bfa02d7790d13dc8a8df19a386",
+                "reference": "060cf24b7d15f0bfa02d7790d13dc8a8df19a386",
                 "shasum": ""
             },
             "require": {
@@ -1317,7 +1317,7 @@
                 "type",
                 "validator"
             ],
-            "time": "2018-07-26T09:13:01+00:00"
+            "time": "2018-08-03T12:20:17+00:00"
         },
         {
             "name": "symfony/serializer",
