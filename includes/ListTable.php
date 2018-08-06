@@ -94,9 +94,6 @@ class ListTable
         'get_bulk_actions',
         'bulk_actions',
         'row_actions',
-        'months_dropdown',
-        'view_switcher',
-        'comments_bubble',
         'get_items_per_page',
         'pagination',
         'get_sortable_columns',
@@ -161,8 +158,8 @@ class ListTable
 
         if (empty($this->modes)) {
             $this->modes = [
-                'list' => __('List View'),
-                'excerpt' => __('Excerpt View'),
+                'list' => 'List View',
+                'excerpt' => 'Excerpt View',
             ];
         }
     }
@@ -475,9 +472,9 @@ class ListTable
             return;
         }
 
-        echo '<label for="bulk-action-selector-' . esc_attr($which) . '" class="screen-reader-text">' . __('Select bulk action') . '</label>';
+        echo '<label for="bulk-action-selector-' . esc_attr($which) . '" class="screen-reader-text">' . 'Select bulk action' . '</label>';
         echo '<select name="action' . $two . '" id="bulk-action-selector-' . esc_attr($which) . "\">\n";
-        echo '<option value="-1">' . __('Bulk Actions') . "</option>\n";
+        echo '<option value="-1">' . 'Bulk Actions' . "</option>\n";
 
         foreach ($this->_actions as $name => $title) {
             $class = $name === 'edit' ? ' class="hide-if-no-js"' : '';
@@ -487,7 +484,7 @@ class ListTable
 
         echo "</select>\n";
 
-        submit_button(__('Apply'), 'action', '', false, ['id' => "doaction$two"]);
+        submit_button('Apply', 'action', '', false, ['id' => "doaction$two"]);
         echo "\n";
     }
 
@@ -544,175 +541,6 @@ class ListTable
         $out .= '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __('Show more details') . '</span></button>';
 
         return $out;
-    }
-
-    /**
-     * Display a monthly dropdown for filtering items
-     *
-     * @since 3.1.0
-     *
-     * @global wpdb      $wpdb
-     * @global WP_Locale $wp_locale
-     *
-     * @param string     $post_type
-     */
-    protected function months_dropdown($post_type) : void
-    {
-        global $wpdb, $wp_locale;
-
-        /**
-         * Filters whether to remove the 'Months' drop-down from the post list table.
-         *
-         * @since 4.2.0
-         *
-         * @param bool   $disable   Whether to disable the drop-down. Default false.
-         * @param string $post_type The post type.
-         */
-        if (apply_filters('disable_months_dropdown', false, $post_type)) {
-            return;
-        }
-
-        $extra_checks = "AND post_status != 'auto-draft'";
-        if (! isset($_GET['post_status']) || 'trash' !== $_GET['post_status']) {
-            $extra_checks .= " AND post_status != 'trash'";
-        } elseif (isset($_GET['post_status'])) {
-            $extra_checks = $wpdb->prepare(' AND post_status = %s', $_GET['post_status']);
-        }
-
-        $months = $wpdb->get_results($wpdb->prepare("
-			SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
-			FROM $wpdb->posts
-			WHERE post_type = %s
-			$extra_checks
-			ORDER BY post_date DESC
-		", $post_type));
-
-        /**
-         * Filters the 'Months' drop-down results.
-         *
-         * @since 3.7.0
-         *
-         * @param object $months    The months drop-down query results.
-         * @param string $post_type The post type.
-         */
-        $months = apply_filters('months_dropdown_results', $months, $post_type);
-
-        $month_count = count($months);
-
-        if (! $month_count || (1 == $month_count && 0 == $months[0]->month)) {
-            return;
-        }
-
-        $m = isset($_GET['m']) ? (int) $_GET['m'] : 0;
-        ?>
-        <label for="filter-by-date" class="screen-reader-text"><?php _e('Filter by date'); ?></label>
-        <select name="m" id="filter-by-date">
-            <option<?php selected($m, 0); ?> value="0"><?php _e('All dates'); ?></option>
-            <?php
-            foreach ($months as $arc_row) {
-                if (0 == $arc_row->year) {
-                    continue;
-                }
-
-                $month = zeroise($arc_row->month, 2);
-                $year  = $arc_row->year;
-
-                printf("<option %s value='%s'>%s</option>\n",
-                    selected($m, $year . $month, false),
-                    esc_attr($arc_row->year . $month),
-                    /* translators: 1: month name, 2: 4-digit year */
-                    sprintf(__('%1$s %2$d'), $wp_locale->get_month($month), $year)
-                );
-            }
-            ?>
-        </select>
-        <?php
-    }
-
-    /**
-     * Display a view switcher
-     *
-     * @since 3.1.0
-     *
-     * @param string $current_mode
-     */
-    protected function view_switcher($current_mode) : void
-    {
-        ?>
-        <input type="hidden" name="mode" value="<?php echo esc_attr($current_mode); ?>"/>
-        <div class="view-switch">
-            <?php
-            foreach ($this->modes as $mode => $title) {
-                $classes = ['view-' . $mode];
-                if ($current_mode === $mode) {
-                    $classes[] = 'current';
-                }
-                printf(
-                    "<a href='%s' class='%s' id='view-switch-$mode'><span class='screen-reader-text'>%s</span></a>\n",
-                    esc_url(add_query_arg('mode', $mode)),
-                    implode(' ', $classes),
-                    $title
-                );
-            }
-            ?>
-        </div>
-        <?php
-    }
-
-    /**
-     * Display a comment count bubble
-     *
-     * @since 3.1.0
-     *
-     * @param int $post_id          The post ID.
-     * @param int $pending_comments Number of pending comments.
-     */
-    protected function comments_bubble($post_id, $pending_comments) : void
-    {
-        $approved_comments = get_comments_number();
-
-        $approved_comments_number = number_format_i18n($approved_comments);
-        $pending_comments_number  = number_format_i18n($pending_comments);
-
-        $approved_only_phrase = sprintf(_n('%s comment', '%s comments', $approved_comments), $approved_comments_number);
-        $approved_phrase      = sprintf(_n('%s approved comment', '%s approved comments', $approved_comments),
-            $approved_comments_number);
-        $pending_phrase       = sprintf(_n('%s pending comment', '%s pending comments', $pending_comments),
-            $pending_comments_number);
-
-        // No comments at all.
-        if (! $approved_comments && ! $pending_comments) {
-            printf('<span aria-hidden="true">&#8212;</span><span class="screen-reader-text">%s</span>',
-                __('No comments')
-            );
-            // Approved comments have different display depending on some conditions.
-        } elseif ($approved_comments) {
-            printf('<a href="%s" class="post-com-count post-com-count-approved"><span class="comment-count-approved" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></a>',
-                esc_url(add_query_arg(['p' => $post_id, 'comment_status' => 'approved'],
-                    admin_url('edit-comments.php'))),
-                $approved_comments_number,
-                $pending_comments ? $approved_phrase : $approved_only_phrase
-            );
-        } else {
-            printf('<span class="post-com-count post-com-count-no-comments"><span class="comment-count comment-count-no-comments" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></span>',
-                $approved_comments_number,
-                $pending_comments ? __('No approved comments') : __('No comments')
-            );
-        }
-
-        if ($pending_comments) {
-            printf('<a href="%s" class="post-com-count post-com-count-pending"><span class="comment-count-pending" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></a>',
-                esc_url(add_query_arg(['p' => $post_id, 'comment_status' => 'moderated'],
-                    admin_url('edit-comments.php'))),
-                $pending_comments_number,
-                $pending_phrase
-            );
-        } else {
-            printf('<span class="post-com-count post-com-count-pending post-com-count-no-pending"><span class="comment-count comment-count-no-pending" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></span>',
-                $pending_comments_number,
-                $approved_comments ? __('No pending comments') : __('No comments')
-            );
-        }
     }
 
     /**
@@ -1100,7 +928,7 @@ class ListTable
 
         if (! empty($columns['cb'])) {
             static $cb_counter = 1;
-            $columns['cb'] = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">' . __('Select All') . '</label>'
+            $columns['cb'] = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">Select All</label>'
                 . '<input id="cb-select-all-' . $cb_counter . '" type="checkbox" />';
             $cb_counter++;
         }

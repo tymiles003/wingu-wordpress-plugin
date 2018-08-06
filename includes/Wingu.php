@@ -64,7 +64,7 @@ class Wingu
         $this->define_admin_hooks();
         $this->define_public_hooks();
 
-        self::$API_URL = Configuration::BACKEND_URL_SANDBOX;
+        self::$API_URL = self::DEV;
         self::refreshApiKey();
     }
 
@@ -97,8 +97,7 @@ class Wingu
 
     private function define_admin_hooks(): void
     {
-//        todo: test different variable pluginnames
-
+//        todo: verify pluginname below is always correct
         $plugin_basename = explode('/', $this::$basename);
         $plugin_name = $plugin_basename[0] . '/' . $plugin_basename[2];
 //        $plugin_name = self::$name.'/'.basename(__FILE__);

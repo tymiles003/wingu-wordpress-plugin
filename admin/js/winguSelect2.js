@@ -4,6 +4,7 @@ jQuery(document).ready(function($) {
     $triggers.select2({
         width: '100%',
         // wingu.api_url
+        // todo: ajax trigger search
     });
     $content.select2({
         width: '100%'

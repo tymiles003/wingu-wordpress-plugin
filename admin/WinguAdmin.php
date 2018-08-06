@@ -84,56 +84,48 @@ class WinguAdmin
         }
 
         $activeTab = $_GET['tab'] ?? 'settings';
-        ?>
-        <h2 class="nav-tab-wrapper">
-            <a href="?page=wingu-options&tab=settings" id="settings_tab" class="nav-tab <?php echo $activeTab === 'settings' ? 'nav-tab-active' : ''; ?>">Settings</a>
-            <?php if (get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID) === 'true'): ?>
-            <a href="?page=wingu-options&tab=triggers" id="triggers_tab" class="nav-tab <?php echo $activeTab === 'triggers' ? 'nav-tab-active' : ''; ?>">Triggers</a>
-            <a href="?page=wingu-options&tab=link" id="link_tab" class="nav-tab <?php echo $activeTab === 'link' ? 'nav-tab-active' : ''; ?>">Link Content</a>
-            <?php endif ?>
-        </h2>
-        <?php if ($activeTab === 'settings'): ?>
-        <form method="POST" action="options.php">
-            <?php
+
+        echo '<h2 class="nav-tab-wrapper">';
+        echo '<a href="?page=wingu-options&tab=settings" id="settings_tab" class="nav-tab' . $activeTab === 'settings' ? 'nav-tab-active' : '' . '">' . __('Settings', Wingu::name()) . '</a>';
+        if (get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID) === 'true') {
+            echo '<a href="?page=wingu-options&tab=triggers" id="triggers_tab" class="nav-tab' . $activeTab === 'triggers' ? 'nav-tab-active' : '' . '">' . __('Triggers', Wingu::name()) . '</a>';
+            echo '<a href="?page=wingu-options&tab=link" id="link_tab" class="nav-tab' . $activeTab === 'link' ? 'nav-tab-active' : '' . '">' . __('Link Content', Wingu::name()) . '</a>';
+        }
+        echo '</h2>';
+
+        if ($activeTab === 'settings') {
+            echo '<form method="POST" action="options.php">';
             settings_fields('wingu-options');
             do_settings_sections('wingu-options');
             submit_button();
-            ?>
-        </form>
-        <?php elseif ($activeTab === 'triggers'): ?>
-        <h2>Triggers</h2>
-        <ol>
-        <?php
-        try {
-            $test = new WinguListTable();
-            $test->prepare_items();
-            ?>
-            <form id="triggers-filter" method="get">
-            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-            <input type="hidden" name="tab" value="triggers" />
-            <?php
-            $test->search_box('Search', 'search');
-            $test->display();
-            ?>
-            </form>
-            <?php
-        } catch (Unauthorized $exception) {
-            update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
-            update_option(Wingu::GLOBAL_KEY_API_KEY, '');
+            echo '</form>';
         }
-        echo '</ol>';
+        elseif ($activeTab === 'triggers') {
+            echo '<h2>Triggers</h2><ol>';
+            try {
+                $test = new WinguListTable();
+                $test->prepare_items();
+                echo '<form id="triggers-filter" method="get">
+            <input type="hidden" name="page" value="' . $_REQUEST['page'] . '" />
+            <input type="hidden" name="tab" value="triggers" />';
+                $test->search_box(__('Search', Wingu::name()), 'search');
+                $test->display();
+                echo '</form>';
+            } catch (Unauthorized $exception) {
+                update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
+                update_option(Wingu::GLOBAL_KEY_API_KEY, '');
+            }
+            echo '</ol>';
 //        http://wingu/api/doc#/operations/Analytics/get_api_analytics__resource_type___resource_id___interaction___aggregation__monthly
-
-        ?>
-        <?php elseif ($activeTab === 'link'): ?>
-        <h2>Link Content to Triggers</h2>
-        <?php endif ?>
-        <?php
+        } elseif ($activeTab === 'link') {
+            echo '<h2>' . __('Link Content to Triggers', Wingu::name()) . '</h2>';
+//            todo: linking/unlinking
+        }
     }
 
     public function wingu_settings_link($links) : array
     {
-        $links[] = '<a href = "' . esc_url(get_admin_url(null, 'options-general.php?page=wingu-options')) . '" >' . __('Settings') . '</a >';
+        $links[] = '<a href = "' . esc_url(get_admin_url(null, 'options-general.php?page=wingu-options')) . '" >' . __('Settings', Wingu::name()) . '</a >';
         return $links;
     }
 
@@ -157,18 +149,18 @@ class WinguAdmin
         $linkBack          = $this->compareValues($post->ID, Wingu::POST_KEY_LINK_BACK, Wingu::GLOBAL_KEY_LINK_BACK);
         ?>
         <label for="wingu_post_display_preference"><input type="radio" name="wingu_post_display_preference" value="content"
-        <?php checked('content', $displayPreference, true); ?>>Content</label>
+        <?php checked('content', $displayPreference, true); ?>><?php _e('Content', Wingu::name()); ?></label>
         <label for="wingu_post_display_preference"><input type="radio" name="wingu_post_display_preference" value="excerpt"
-        <?php checked('excerpt', $displayPreference, true); ?>>Excerpt</label>
+        <?php checked('excerpt', $displayPreference, true); ?>><?php _e('Excerpt', Wingu::name()); ?></label>
         <br>
         <label for="wingu_post_link_back"><input type="checkbox" name="wingu_post_link_back" value="true"
-        <?php checked('true', $linkBack, true); ?>>Link back</label>
+        <?php checked('true', $linkBack, true); ?>><?php _e('Link back', Wingu::name()); ?></label>
         <br /><br />
         <select id="wingu_post_choice" name="wingu_post_choice">
-        <option value="do-nothing" selected>Do nothing</option>
-        <option value="update-component">Update content from Wordpress</option>
-        <option value="new-content">Create new Content and link to Trigger</option>
-        <option value="existing-content">Add to existing Content</option>
+        <option value="do-nothing" selected><?php _e('Do nothing', Wingu::name()) ?></option>
+        <option value="update-component"><?php _e('Update content from Wordpress', Wingu::name()); ?></option>
+        <option value="new-content"><?php _e('Create new Content and link to Trigger', Wingu::name()); ?></option>
+        <option value="existing-content"><?php _e('Add to existing Content', Wingu::name()); ?></option>
         </select>
         <div>
 		<select id="wingu_post_triggers" name="wingu_post_triggers[]" multiple>
@@ -227,8 +219,8 @@ class WinguAdmin
                             $deckId = $current->packs()[0]->deck()->id();
                            $deckTitle = $current->packs()[0]->deck()->title();
                         } else {
-                            $deckId = 'No ID';
-                            $deckTitle = 'No title';
+                            $deckId = __('No ID', Wingu::name());
+                            $deckTitle = __('No title', Wingu::name());
                         }
                         echo '<option value="' . $deckId . '" ' . (($current_content === $current->id()) ? 'selected' : '') . '>' . $deckTitle . '</option>';
                         $response->next();
@@ -347,7 +339,7 @@ class WinguAdmin
     {
         $value = get_option($name);
         echo "<input type='text' size='50' maxlength='36' id='{$name}' name='{$name}' value=" . ($value !== null ? esc_attr($value) : '') . '>';
-        echo "&nbsp;<input type='button' class='button button-secondary' id='api_key_checker' value='Validate'>";
+        echo "&nbsp;<input type='button' class='button button-secondary' id='api_key_checker' value='" . __('Validate', Wingu::name()) . "'>";
     }
 
     public function wingu_settings_display_preference($name) : void
@@ -373,7 +365,8 @@ class WinguAdmin
         $value = get_option($name);
 
         echo "<textarea id='{$name}' name='{$name}' rows='5' cols='50'>{$value}</textarea>";
-        echo '<br>existing options include {AUTHOR}, {DATE}, {TITLE}, {DATE_MODIFIED}, {TYPE}, {COMMENT_COUNT}';
+         _e('Existing options include', Wingu::name());
+        echo ' {AUTHOR}, {DATE}, {TITLE}, {DATE_MODIFIED}, {TYPE}, {COMMENT_COUNT}';
 //      todo: change placement of help message above
     }
 
@@ -434,7 +427,7 @@ class WinguAdmin
             $text .= $linkbackText;
         }
 
-//        todo: check logic
+//        todo: verify that logic is always correct
         if ($_POST['wingu_post_choice'] === 'update-component') {
             $componentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
             if ($componentId !== false) {
