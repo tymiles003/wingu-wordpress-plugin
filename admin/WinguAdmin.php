@@ -165,7 +165,7 @@ class WinguAdmin
                             );
                             break;
                     }
-                    echo 'Successfully unlinked Content from Your trigger.';
+                    echo 'Successfully unlinked Content ' . $_GET['content'] . ' from Your trigger ' . $_GET['name'] . '.';
                 } elseif ($_GET['action'] === 'link') {
 
                 }
