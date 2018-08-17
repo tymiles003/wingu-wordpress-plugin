@@ -117,7 +117,7 @@ class WinguAdmin
             echo '<form method="POST" action="options.php">';
             settings_fields('wingu-options');
             do_settings_sections('wingu-options');
-            submit_button();
+            submit_button(__('Save changes', Wingu::name()), 'primary', 'wingu_settings_submit');
             echo '</form>';
         } elseif ($activeTab === 'triggers') {
             echo '<h2>Triggers</h2><ol>';
@@ -139,36 +139,47 @@ class WinguAdmin
         } elseif ($activeTab === 'link') {
             echo '<h2>'.__('Link Content to Triggers', Wingu::name()).'</h2>';
 //            todo: linking/unlinking
-            if (isset($_GET['action'])) {
-                if ($_GET['action'] === 'unlink') {
-                    $type = strtolower($_GET['type']);
+            if (isset($_REQUEST['action'])) {
+                if ($_REQUEST['action'] === 'unlink') {
+                    $type = strtolower($_REQUEST['type']);
                     switch ($type) {
                         case 'beacon':
                             Wingu::$API->beacon()->updateMyBeacon(
-                                $_GET['trigger'],
+                                $_REQUEST['trigger'],
                                 new RequestBeacon(new StringValue(null))
                             );
                             break;
                         case 'geofence':
                             Wingu::$API->geofence()->updateMyGeofence(
-                                $_GET['trigger'],
+                                $_REQUEST['trigger'],
                                 new RequestGeofence(new StringValue(null))
                             );
                             break;
                         case 'nfc':
-                            Wingu::$API->nfc()->updateMyNfc($_GET['trigger'], new RequestNfc(new StringValue(null)));
+                            Wingu::$API->nfc()->updateMyNfc($_REQUEST['trigger'], new RequestNfc(new StringValue(null)));
                             break;
                         case 'qrcode':
                             Wingu::$API->qrcode()->updateMyQrCode(
-                                $_GET['trigger'],
+                                $_REQUEST['trigger'],
                                 new RequestQrCode(new StringValue(null))
                             );
                             break;
                     }
-                    echo 'Successfully unlinked Content ' . $_GET['content'] . ' from Your trigger ' . $_GET['name'] . '.';
-                } elseif ($_GET['action'] === 'link') {
+                    echo 'Successfully unlinked Content ' . $_REQUEST['content'] . ' from Your trigger ' . $_REQUEST['name'] . '.';
+                } elseif ($_REQUEST['action'] === 'link') {
 
                 }
+            } else {
+                $posts = get_posts(['post_type' => 'any']);
+                foreach ($posts as $post) {
+                    echo $post->post_title . '<br>';
+                }
+                echo '<form id="triggers-filter" method="get">
+            <input type="hidden" name="page" value="'.$_REQUEST['page'].'" />
+            <input type="hidden" name="tab" value="link" />';
+                submit_button(null, 'primary', 'link_content');
+                echo '</form>';
+//                echo 'Choose trigger and Content';
             }
         }
     }

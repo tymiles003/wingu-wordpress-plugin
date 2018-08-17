@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-    let $submit = $('#submit');
+    let $submit = $('#wingu_settings_submit');
     let $apikey = $("#wingu_setting_api_key");
     $submit.hide();
     $("#api_key_checker").click(function() {
