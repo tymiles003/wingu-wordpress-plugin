@@ -64,7 +64,7 @@ class Wingu
         $this->define_admin_hooks();
         $this->define_public_hooks();
 
-        self::$API_URL = self::DEV;
+        self::$API_URL = Configuration::BACKEND_URL_SANDBOX;
         self::refreshApiKey();
     }
 

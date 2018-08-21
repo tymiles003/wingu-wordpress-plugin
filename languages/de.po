@@ -1,10 +1,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: wingu-wordpress-plugin\n"
-"POT-Creation-Date: 2018-08-20 17:23+0200\n"
-"PO-Revision-Date: \n"
-"Language-Team: Wingu Team <hilfe@wingu.de>\n"
 "Report-Msgid-Bugs-To: Wingu <hilfe@wingu.de>\n"
+"POT-Creation-Date: 2018-08-06 10:26+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Wingu Team <hilfe@wingu.de>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,154 +18,117 @@ msgstr ""
 "_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext:1,2;__ngettext_noop:1,2;_c,_nc:4c,1,2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Generator: Poedit 2.1.1\n"
-"Last-Translator: \n"
-"Language: de\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: admin/WinguAdmin.php:78 admin/WinguAdmin.php:100 admin/WinguAdmin.php:307
-#: admin/WinguAdmin.php:424
+#: admin/WinguAdmin.php:61 admin/WinguAdmin.php:83 admin/WinguAdmin.php:138
+#: admin/WinguAdmin.php:247
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: admin/WinguAdmin.php:106 admin/WinguAdmin.php:296
+#: admin/WinguAdmin.php:89 admin/WinguAdmin.php:128
 msgid "Settings"
 msgstr ""
 
-#: admin/WinguAdmin.php:109 admin/WinguAdmin.php:123
+#: admin/WinguAdmin.php:91
 msgid "Triggers"
 msgstr ""
 
-#: admin/WinguAdmin.php:111
+#: admin/WinguAdmin.php:92
 msgid "Link Content"
 msgstr ""
 
-#: admin/WinguAdmin.php:120
-msgid "Save changes"
-msgstr ""
-
-#: admin/WinguAdmin.php:130
+#: admin/WinguAdmin.php:111
 msgid "Search"
 msgstr ""
 
-#: admin/WinguAdmin.php:139
+#: admin/WinguAdmin.php:121
 msgid "Link Content to Triggers"
 msgstr ""
 
-#: admin/WinguAdmin.php:172
-msgid "Successfully unlinked content entitled "
-msgstr ""
-
-#: admin/WinguAdmin.php:172
-msgid " from Your Wingu Trigger "
-msgstr ""
-
-#: admin/WinguAdmin.php:182
-msgid "Trigger"
-msgstr ""
-
-#: admin/WinguAdmin.php:188 admin/WinguAdmin.php:327 admin/WinguAdmin.php:539
-msgid "Content"
-msgstr ""
-
-#: admin/WinguAdmin.php:200
-msgid "Link Content to Wingu Trigger"
-msgstr ""
-
-#: admin/WinguAdmin.php:280
-msgid "Trigger "
-msgstr ""
-
-#: admin/WinguAdmin.php:280
-msgid " linked to "
-msgstr ""
-
-#: admin/WinguAdmin.php:289
-msgid ""
-"You can link Wordpress content to Wingu Triggers not only in Post/Page view, "
-"but also directly from Triggers list in Settings. Just click on Link "
-"displayed when hovering over selected Trigger."
-msgstr ""
-
-#: admin/WinguAdmin.php:311
+#: admin/WinguAdmin.php:142
 msgid "Invalid Wingu API Key."
 msgstr ""
 
-#: admin/WinguAdmin.php:330 admin/WinguAdmin.php:545
+#: admin/WinguAdmin.php:152 admin/WinguAdmin.php:350
+msgid "Content"
+msgstr ""
+
+#: admin/WinguAdmin.php:154 admin/WinguAdmin.php:353
 msgid "Excerpt"
 msgstr ""
 
-#: admin/WinguAdmin.php:333 admin/WinguAdmin.php:492
+#: admin/WinguAdmin.php:157 admin/WinguAdmin.php:311
 msgid "Link back"
 msgstr ""
 
-#: admin/WinguAdmin.php:336
+#: admin/WinguAdmin.php:160
 msgid "Do nothing"
 msgstr ""
 
-#: admin/WinguAdmin.php:337
+#: admin/WinguAdmin.php:161
 msgid "Update content from Wordpress"
 msgstr ""
 
-#: admin/WinguAdmin.php:338
+#: admin/WinguAdmin.php:162
 msgid "Create new Content and link to Trigger"
 msgstr ""
 
-#: admin/WinguAdmin.php:339
+#: admin/WinguAdmin.php:163
 msgid "Add to existing Content"
 msgstr ""
 
-#: admin/WinguAdmin.php:398
+#: admin/WinguAdmin.php:222
 msgid "No ID"
 msgstr ""
 
-#: admin/WinguAdmin.php:399
+#: admin/WinguAdmin.php:223
 msgid "No title"
 msgstr ""
 
-#: admin/WinguAdmin.php:413
+#: admin/WinguAdmin.php:236
 msgid "Go to plugin options"
 msgstr ""
 
-#: admin/WinguAdmin.php:467
+#: admin/WinguAdmin.php:286
 msgid "Wingu Settings"
 msgstr ""
 
-#: admin/WinguAdmin.php:474
+#: admin/WinguAdmin.php:293
 msgid "API Key"
 msgstr ""
 
-#: admin/WinguAdmin.php:483
+#: admin/WinguAdmin.php:302
 msgid "Display"
 msgstr ""
 
-#: admin/WinguAdmin.php:501
+#: admin/WinguAdmin.php:320
 msgid "Link back text"
 msgstr ""
 
-#: admin/WinguAdmin.php:517
+#: admin/WinguAdmin.php:335
 msgid ""
 "Enter your API Key. Choose whether you want to connect to triggers whole "
 "posts or only excerpts. Select if links back to your site should be added at "
 "the end of your texts."
 msgstr ""
 
-#: admin/WinguAdmin.php:528
+#: admin/WinguAdmin.php:342
 msgid "Validate"
 msgstr ""
 
-#: admin/WinguAdmin.php:562
+#: admin/WinguAdmin.php:368
 msgid "Existing options include"
 msgstr ""
 
-#: admin/WinguAdmin.php:582
+#: admin/WinguAdmin.php:387
 msgid "Wingu Triggers"
 msgstr ""
 
-#: admin/WinguAdmin.php:590
+#: admin/WinguAdmin.php:392
 msgid "The Wingu API Key is incorrect. Enter valid key"
 msgstr ""
 
-#: admin/WinguAdmin.php:593
+#: admin/WinguAdmin.php:392
 msgid "here"
 msgstr ""
 

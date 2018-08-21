@@ -7,6 +7,7 @@ namespace Wingu\Plugin\Wordpress;
 use Wingu\Engine\SDK\Model\Request\Card as RequestCard;
 use Wingu\Engine\SDK\Api\Exception\HttpClient\Unauthorized;
 use Wingu\Engine\SDK\Model\Request\Component\CMS;
+use Wingu\Engine\SDK\Model\Request\Content\Pack as RequestPack;
 use Wingu\Engine\SDK\Model\Request\Content\PrivateContentChannels;
 use Wingu\Engine\SDK\Model\Request\StringValue;
 use Wingu\Engine\SDK\Model\Response\Channel\Beacon\PrivateBeacon;
@@ -52,7 +53,7 @@ class WinguAdmin
     {
         wp_enqueue_script(
             'ajax-apikey-checker',
-            plugins_url(Wingu::name() . '/admin/js/checkApiKey.js'),
+            plugins_url(Wingu::name() . '/admin/js/wingu-api-key.js'),
             ['jquery', 'jquery-ui-tabs']
         );
         wp_enqueue_script(
@@ -62,7 +63,7 @@ class WinguAdmin
         );
         wp_register_script(
             'wingu-select2',
-            plugins_url(Wingu::name() . '/admin/js/winguSelect2.js'),
+            plugins_url(Wingu::name() . '/admin/js/wingu-select2.js'),
             ['jquery', 'select2']
         );
         $wingu_variables = [
@@ -78,7 +79,7 @@ class WinguAdmin
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
-        $old = get_option(Wingu::GLOBAL_KEY_API_KEY);
+        $oldKey = get_option(Wingu::GLOBAL_KEY_API_KEY);
         update_option(Wingu::GLOBAL_KEY_API_KEY, $_GET['apikey']);
         Wingu::refreshApiKey();
 
@@ -87,7 +88,7 @@ class WinguAdmin
             update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'true');
         } catch (Unauthorized $exception) {
             echo 'Invalid';
-            update_option(Wingu::GLOBAL_KEY_API_KEY, $old);
+            update_option(Wingu::GLOBAL_KEY_API_KEY, $oldKey);
             Wingu::refreshApiKey();
         }
 
@@ -106,9 +107,9 @@ class WinguAdmin
         echo "<a href='?page=wingu-options&tab=settings' id='settings_tab' class='nav-tab " . ($activeTab === 'settings' ? 'nav-tab-active' : '') . "'>" . __('Settings',
                 Wingu::name()) . '</a>';
         if (get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID) === 'true') {
-            echo "<a href='?page=wingu-options&tab=triggers' id='triggers_tab' class='nav-tab " . ($activeTab === 'triggers' ? 'nav-tab-active' : '') . "'>" . __('Triggers',
+            echo "<a href='?page=wingu-options&tab=triggers' id='triggers_tab' class='nav-tab " . ($activeTab === 'triggers' ? 'nav-tab-active' : '') . "'>" . __('Wingu Triggers',
                     Wingu::name()) . '</a>';
-            echo "<a href='?page=wingu-options&tab=link' id='link_tab' class='nav-tab " . ($activeTab === 'link' ? 'nav-tab-active' : '') . "'>" . __('Link Content',
+            echo "<a href='?page=wingu-options&tab=link' id='link_tab' class='nav-tab " . ($activeTab === 'link' ? 'nav-tab-active' : '') . "'>" . __('Linking contents to Wingu Triggers',
                     Wingu::name()) . '</a>';
         }
         echo '</h2>';
@@ -122,13 +123,13 @@ class WinguAdmin
         } elseif ($activeTab === 'triggers') {
             echo '<h2>' . __('Triggers', Wingu::name()) . '</h2>';
             try {
-                $test = new WinguListTable();
-                $test->prepare_items();
+                $winguTriggerList = new WinguListTable();
+                $winguTriggerList->prepare_items();
                 echo '<form id="triggers-filter" method="get">
-            <input type="hidden" name="page" value="' . $_REQUEST['page'] . '" />
-            <input type="hidden" name="tab" value="triggers" />';
-                $test->search_box(__('Search', Wingu::name()), 'search');
-                $test->display();
+                      <input type="hidden" name="page" value="' . $_REQUEST['page'] . '" />
+                      <input type="hidden" name="tab" value="triggers" />';
+                $winguTriggerList->search_box(__('Search', Wingu::name()), 'search');
+                $winguTriggerList->display();
                 echo '</form>';
             } catch (Unauthorized $exception) {
                 update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
@@ -169,26 +170,29 @@ class WinguAdmin
                             );
                             break;
                     }
-                    echo __('Successfully unlinked content entitled ', Wingu::name()) . $_REQUEST['content'] . __(' from Your Wingu Trigger ', Wingu::name()) . $_REQUEST['name'] . '.';
+                    echo __('Successfully unlinked content entitled ',
+                            Wingu::name()) . $_REQUEST['content'] . __(' from Your Wingu Trigger ',
+                            Wingu::name()) . $_REQUEST['name'] . '.';
                 } elseif ($_REQUEST['action'] === 'link') {
-                    if (!isset($_REQUEST['wingu_link_content'])) {
+                    if (! isset($_REQUEST['wingu_link_content'])) {
                         ?>
                         <form method="POST">
-                            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-                            <input type="hidden" name="tab" value="link" />
+                            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
+                            <input type="hidden" name="tab" value="link"/>
                             <table class="form-table">
                                 <tbody>
                                 <tr>
                                     <th scope="row"><?php _e('Trigger', Wingu::name()) ?></th>
-                                    <td><select id="wingu_link_trigger" name="wingu_link_trigger" readonly>
-                                            <option value="<?php echo $_REQUEST['trigger']; ?>" selected><?php echo $_REQUEST['name']; ?></option>
+                                    <td><select id="wingu_link_trigger" name="wingu_link_trigger">
+                                            <option value="<?php echo $_REQUEST['trigger']; ?>"
+                                                    selected><?php echo $_REQUEST['name']; ?></option>
                                         </select></td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><?php _e('Content', Wingu::name()) ?></th>
                                     <td><select id="wingu_link_content" name="wingu_link_content">
                                             <?php
-                                            $posts = get_posts(['post_type' => 'any']);
+                                            $posts = get_posts(['post_type' => ['post', 'page']]);
                                             foreach ($posts as $post) {
                                                 echo "<option value='{$post->ID}'>{$post->post_title}</option>";
                                             }
@@ -206,7 +210,7 @@ class WinguAdmin
                             $dispPref = get_option(Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
                             $linkback = get_option(Wingu::GLOBAL_KEY_LINK_BACK);
                             $text     = null;
-                            $post = get_post($_REQUEST['wingu_link_content']);
+                            $post     = get_post($_REQUEST['wingu_link_content']);
                             if ($dispPref === 'content') {
                                 $text = $post->post_content;
                             } elseif ($dispPref === 'excerpt') {
@@ -234,9 +238,12 @@ class WinguAdmin
 
                             $createdComponentId = get_post_meta($post->ID, Wingu::POST_KEY_COMPONENT, true);
                             if ($createdComponentId === '') {
-                                $createdComponent = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+                                $createdComponent   = $winguApi->component()->createCmsComponent(new CMS($text,
+                                    'html'));
                                 $createdComponentId = $createdComponent->id();
                                 update_post_meta($post->ID, Wingu::POST_KEY_COMPONENT, $createdComponentId);
+                            } else {
+                                $winguApi->component()->updateCmsComponent($createdComponentId, new CMS($text, 'html'));
                             }
 
                             $createdDeck    = $winguApi->deck()->createDeck(
@@ -248,7 +255,8 @@ class WinguAdmin
                             );
                             update_post_meta($post->ID, Wingu::POST_KEY_CONTENT, $createdContent->id());
 
-                            $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponentId, 0));
+                            $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponentId,
+                                0));
 
                             $type = strtolower($_REQUEST['type']);
                             switch ($type) {
@@ -277,7 +285,8 @@ class WinguAdmin
                                     break;
                             }
 
-                            echo __('Trigger ', Wingu::name()) . $_REQUEST['name'] . __(' linked to ', Wingu::name()) . $post->post_title;
+                            echo __('Trigger ', Wingu::name()) . $_REQUEST['name'] . __(' linked to ',
+                                    Wingu::name()) . $post->post_title;
                         } catch (\Exception $exception) {
                             echo $exception->getTraceAsString();
                             echo 'Something went wrong. Try again later.';
@@ -286,14 +295,16 @@ class WinguAdmin
                     }
                 }
             } else {
-                _e('You can link Wordpress content to Wingu Triggers not only in Post/Page view, but also directly from Triggers list in Settings. Just click on Link displayed when hovering over selected Trigger.', Wingu::name());
+                _e('You can link Wordpress content to Wingu Triggers not only in Post/Page view, but also directly from Triggers list in Settings. Just click on Link displayed when hovering over selected Trigger. Global settings will be taken into account over post-specific ones.',
+                    Wingu::name());
             }
         }
     }
 
     public function wingu_settings_link($links) : array
     {
-        $links[] = '<a href = "' . esc_url(get_admin_url(null, 'options-general.php?page=wingu-options')) . '" >' . __('Settings', Wingu::name()) . '</a>';
+        $links[] = '<a href = "' . esc_url(get_admin_url(null,
+                'options-general.php?page=wingu-options')) . '" >' . __('Settings', Wingu::name()) . '</a>';
 
         return $links;
     }
@@ -344,7 +355,7 @@ class WinguAdmin
                 try {
                     $response = $winguChannelApi->myChannels();
                     $response->current();
-                    $all_triggers = [];
+                    $all_triggers    = [];
                     $current_content = get_post_meta($post->ID, Wingu::POST_KEY_CONTENT, true);
                     while ($response->valid()) {
                         $id        = $response->current()->id();
@@ -370,7 +381,9 @@ class WinguAdmin
                     <?php foreach ($all_triggers as $type => $triggers): ?>
                         <optgroup label="<?php echo $type; ?>">
                             <?php foreach ($triggers as $trigger): ?>
-                                <option value="<?php echo $trigger->id() ?>" <?php if ($trigger->content() === $current_content) { echo 'selected'; }?>><?php echo $trigger->name(); ?></option>
+                                <option value="<?php echo $trigger->id() ?>" <?php if ($trigger->content() === $current_content) {
+                                    echo 'selected';
+                                } ?>><?php echo $trigger->name(); ?></option>
 
                             <?php endforeach; ?>
                         </optgroup>
@@ -513,38 +526,28 @@ class WinguAdmin
 
     public function wingu_settings_section() : void
     {
-        echo '<p>' . __(
-                'Enter your API Key. Choose whether you want to connect to triggers whole posts or only excerpts. Select if links back to your site should be added at the end of your texts.'
-            ) . '</p>';
+        echo '<p>' .
+            __('Enter your API Key. Choose whether you want to connect to triggers whole posts or only excerpts. Select if links back to your site should be added at the end of your texts.')
+            . '</p>';
     }
 
     public function wingu_settings_api_key($name) : void
     {
         $value = get_option($name);
-        echo "<input type='text' size='50' maxlength='36' id='{$name}' name='{$name}' value=" . ($value !== null ? esc_attr(
-                $value
-            ) : '') . '>';
-        echo "&nbsp;<input type='button' class='button button-secondary' id='api_key_checker' value='" . __(
-                'Validate',
-                Wingu::name()
-            ) . "'>";
+        echo "<input type='text' size='50' maxlength='36' id='{$name}' name='{$name}' value=" . ($value !== null ? esc_attr($value) : '') . '>';
+        echo "&nbsp;<input type='button' class='button button-secondary' id='api_key_checker' value='" . __('Validate', Wingu::name()) . "'>";
     }
 
     public function wingu_settings_display_preference($name) : void
     {
         $value = get_option($name);
         echo
-            "<label>
-         <input type='radio' name='{$name}' value='content' " . checked('content', $value, false) . '>' . __(
-                'Content',
-                Wingu::name()
-            ) .
+            "<label><input type='radio' name='{$name}' value='content' " . checked('content', $value, false) . '>'
+            . __('Content', Wingu::name()) .
             "</label>
-         <label>
-         <input type='radio' name='{$name}' value='excerpt' " . checked('excerpt', $value, false) . '>' . __(
-                'Excerpt',
-                Wingu::name()
-            ) .
+             <label>
+             <input type='radio' name='{$name}' value='excerpt' " . checked('excerpt', $value, false) . '>'
+            . __('Excerpt', Wingu::name()) .
             '</label>';
     }
 
@@ -558,10 +561,10 @@ class WinguAdmin
     {
         $value = get_option($name);
 
-        echo "<textarea id='{$name}' name='{$name}' rows='5' cols='50'>{$value}</textarea>";
+        echo "<textarea id='{$name}' name='{$name}' rows='5' cols='50'>{$value}</textarea><br>";
         _e('Existing options include', Wingu::name());
         echo ' {AUTHOR}, {DATE}, {TITLE}, {DATE_MODIFIED}, {TYPE}, {COMMENT_COUNT}';
-//      todo: change placement of help message above
+//      todo: placement of help message above
     }
 
     public function wingu_custom_posts_column($column, $postId) : void
@@ -569,7 +572,7 @@ class WinguAdmin
         if ($column === 'wingu') {
             $content = get_post_meta($postId, Wingu::POST_KEY_CONTENT, true);
             if ($content !== '') {
-//              todo: change Wingu icon
+//              todo: Wingu icon
                 echo '<img height="40" width="40" src="' . plugins_url(Wingu::name() . '/admin/wingu.jpg') . '">';
             }
         }
@@ -586,11 +589,20 @@ class WinguAdmin
     public function wingu_api_key_notice() : void
     {
         if (get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID) !== 'true') {
-            echo '<div class="notice notice-error"><p>' . __(
-                    'The Wingu API Key is incorrect. Enter valid key'
-                ) . ' <a href="' . esc_url(
-                    get_admin_url() . 'options-general.php?page=wingu-options'
-                ) . '" target="_blank">' . __('here') . '</a></div>';
+            global $pagenow;
+            $whitelistDisplayNotice = [
+                'options-general.php',
+                'edit.php',
+                'post-new.php',
+                'plugins.php'
+            ];
+            if (\in_array($pagenow, $whitelistDisplayNotice, true)) {
+                echo '<div class="notice notice-error"><p>' . __(
+                        'The Wingu API Key is incorrect. Enter valid key'
+                    ) . ' <a href="' . esc_url(
+                        get_admin_url() . 'options-general.php?page=wingu-options'
+                    ) . '" target="_blank">' . __('here') . '</a></div>';
+            }
         }
     }
 
@@ -640,9 +652,11 @@ class WinguAdmin
         } elseif ($_POST['wingu_post_choice'] === 'new-content') {
             $createdComponentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
             if ($createdComponentId === '') {
-                $createdComponent = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+                $createdComponent   = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
                 $createdComponentId = $createdComponent->id();
                 update_post_meta($postId, Wingu::POST_KEY_COMPONENT, $createdComponentId);
+            } else {
+                $winguApi->component()->updateCmsComponent($createdComponentId, new CMS($text, 'html'));
             }
 
             $createdDeck    = $winguApi->deck()->createDeck(
@@ -655,6 +669,7 @@ class WinguAdmin
             update_post_meta($postId, Wingu::POST_KEY_CONTENT, $createdContent->id());
 
             $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponentId, 0));
+            $winguApi->content()->createMyPack(new RequestPack($createdContent->id(), $createdDeck->id(), 'en'));
             $winguApi->content()->attachMyContentToChannelsExclusively(
                 $createdContent->id(),
                 new PrivateContentChannels($_POST['wingu_post_triggers'])
@@ -662,9 +677,11 @@ class WinguAdmin
         } elseif ($_POST['wingu_post_choice'] === 'existing-content') {
             $createdComponentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
             if ($createdComponentId === '') {
-                $createdComponent = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+                $createdComponent   = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
                 $createdComponentId = $createdComponent->id();
                 update_post_meta($postId, Wingu::POST_KEY_COMPONENT, $createdComponentId);
+            } else {
+                $winguApi->component()->updateCmsComponent($createdComponentId, new CMS($text, 'html'));
             }
 
             $winguApi->card()->addCardToDeck(new RequestCard($_POST['wingu_post_content'], $createdComponentId, 0));
@@ -673,6 +690,7 @@ class WinguAdmin
 
     public function wingu_portal_unlink_triggers() : void
     {
+        /** todo: unlinking from portal */
         if (! isset($_POST['unlinked_triggers'])) {
             return;
         }
@@ -686,23 +704,23 @@ class WinguAdmin
 
     public function _ajax_fetch_wingu_triggers_callback() : void
     {
-        $wingu_triggers_table = new WinguListTable();
-        $wingu_triggers_table->ajax_response();
+        $winguTriggersList = new WinguListTable();
+        $winguTriggersList->ajax_response();
     }
 
     public function ajax_trigger_pagination_script() : void
     {
         echo '<script>';
-        include __DIR__ . '/js/ajaxPagination.js';
+        include __DIR__ . '/js/wingu-ajax-pagination.js';
         echo '</script>';
     }
 
     private function compareValues($postId, $postMetaKey, $globalKey)
     {
-        $dispGlobalSetting = get_option($globalKey);
-        $dispPostSpecific  = get_post_meta($postId, $postMetaKey, true);
+        $globalSetting = get_option($globalKey);
+        $postSpecific  = get_post_meta($postId, $postMetaKey, true);
 
-        return $dispPostSpecific ?: $dispGlobalSetting;
+        return $postSpecific ?: $globalSetting;
     }
 
     public function name() : string

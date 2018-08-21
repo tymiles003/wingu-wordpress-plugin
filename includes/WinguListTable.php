@@ -165,9 +165,6 @@ class WinguListTable extends ListTable
         wp_nonce_field('ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce');
         echo '<input id="order" type="hidden" name="order" value="' . $this->_pagination_args['order'] . '" />';
         echo '<input id="orderby" type="hidden" name="orderby" value="' . $this->_pagination_args['orderby'] . '" />';
-//        if (isset($_REQUEST['s'])) {
-//            echo '<input id="s" type="hidden" name="s" value="' . $_REQUEST['s'] . '" />';
-//        }
 
         parent::display();
     }
