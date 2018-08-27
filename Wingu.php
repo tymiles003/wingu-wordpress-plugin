@@ -3,15 +3,17 @@
 declare(strict_types=1);
 
 /**
- * Author: Wingu
- * Author Email: hilfe@wingu.de
- * Author URI: https://www.wingu.de
- * Description: Describe me here
- * Domain Path: /lang
  * Plugin Name: Wingu
  * Plugin URI: https://www.wingu.de/en/developer
+ * Description: Describe me here
  * Version: 1.0
- * Text Domain: wingu-wordpress-plugin
+ * Author: Wingu
+ * Author URI: https://www.wingu.de
+ * Author Email: hilfe@wingu.de
+ * License: GPL2
+ * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
+ * Domain Path: /languages
+ * Text Domain: wingu
  * */
 
 use Wingu\Plugin\Wordpress\Wingu;

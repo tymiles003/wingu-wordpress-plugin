@@ -114,6 +114,7 @@ class Wingu
         $this->loader->add_action('post_updated', $wingu_admin, 'wingu_post_updated', 50, 2);
         $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta', 100);
         $this->loader->add_action('wp_ajax_check_api_key', $wingu_admin, 'check_api_key');
+        $this->loader->add_action('wp_ajax_get_wingu_private_triggers', $wingu_admin, 'get_wingu_private_triggers');
         $this->loader->add_action('wp_ajax__ajax_fetch_wingu_triggers', $wingu_admin, '_ajax_fetch_wingu_triggers_callback');
         $this->loader->add_action('admin_footer', $wingu_admin, 'ajax_trigger_pagination_script');
 

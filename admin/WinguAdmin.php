@@ -54,24 +54,62 @@ class WinguAdmin
         wp_enqueue_script(
             'ajax-apikey-checker',
             plugins_url(Wingu::name() . '/admin/js/wingu-api-key.js'),
-            ['jquery', 'jquery-ui-tabs']
+            ['jquery', 'jquery-ui-tabs'],
+            time()
         );
         wp_enqueue_script(
             'select2',
             plugins_url(Wingu::name() . '/admin/js/select2.min.js'),
-            ['jquery']
+            ['jquery'],
+            time()
         );
         wp_register_script(
             'wingu-select2',
             plugins_url(Wingu::name() . '/admin/js/wingu-select2.js'),
-            ['jquery', 'select2']
+            ['jquery', 'select2'],
+            time()
         );
         $wingu_variables = [
             'api_url' => Wingu::$API_URL,
+            'api_key' => get_option(Wingu::GLOBAL_KEY_API_KEY)
         ];
         wp_localize_script('wingu-select2', 'wingu', $wingu_variables);
         wp_enqueue_script('wingu-select2');
     }
+
+    public function get_wingu_private_triggers() : array
+    {
+        try {
+            $response = Wingu::$API->channel()->myChannels();
+            $response->current();
+            $all_triggers    = [];
+            while ($response->valid()) {
+                $id        = $response->current()->id();
+                $name      = $response->current()->name();
+                $contentid = $response->current()->content() ? $response->current()->content()->id() : 'No Content ID';
+                $all_triggers[] = (object)['id' => $id, 'text' => $name, 'content' => $contentid];
+//                switch (\get_class($response->current())) {
+//                    case PrivateGeofence::class:
+//                        $all_triggers[self::GEOFENCE][] = new WinguTrigger($id, $name, $contentid);
+//                        break;
+//                    case PrivateQrCode::class:
+//                        $all_triggers[self::QRCODE][] = new WinguTrigger($id, $name, $contentid);
+//                        break;
+//                    case PrivateNfc::class:
+//                        $all_triggers[self::NFC][] = new WinguTrigger($id, $name, $contentid);
+//                        break;
+//                    case PrivateBeacon::class:
+//                        $all_triggers[self::BEACON][] = new WinguTrigger($id, $name, $contentid);
+//                        break;
+//                }
+                $response->next();
+            }
+            return $all_triggers;
+        } catch (\Exception $exception) {
+        }
+        wp_die();
+    }
+
 
     public function check_api_key() : void
     {
@@ -315,7 +353,7 @@ class WinguAdmin
         $winguContentApi = Wingu::$API->content();
 
         if (! current_user_can('edit_others_posts')) {
-            wp_die(__('You do not have sufficient permissions to access this page.'));
+            wp_die(__('You do not have sufficient permissions to access this page.', Wingu::name()));
         }
 
         if (get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID) === 'false') {
@@ -326,11 +364,7 @@ class WinguAdmin
 
         wp_nonce_field(plugin_basename(__FILE__), 'wingu_nonce');
 
-        $displayPreference = $this->compareValues(
-            $post->ID,
-            Wingu::POST_KEY_DISPLAY_PREFERENCE,
-            Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE
-        );
+        $displayPreference = $this->compareValues($post->ID, Wingu::POST_KEY_DISPLAY_PREFERENCE, Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
         $linkBack          = $this->compareValues($post->ID, Wingu::POST_KEY_LINK_BACK, Wingu::GLOBAL_KEY_LINK_BACK);
         ?>
         <label for="wingu_post_display_preference"><input type="radio" name="wingu_post_display_preference"
@@ -565,6 +599,7 @@ class WinguAdmin
         _e('Existing options include', Wingu::name());
         echo ' {AUTHOR}, {DATE}, {TITLE}, {DATE_MODIFIED}, {TYPE}, {COMMENT_COUNT}';
 //      todo: placement of help message above
+//      todo: whether placeholders should be english only
     }
 
     public function wingu_custom_posts_column($column, $postId) : void
@@ -596,6 +631,7 @@ class WinguAdmin
                 'post-new.php',
                 'plugins.php'
             ];
+//            todo: check whether thats it
             if (\in_array($pagenow, $whitelistDisplayNotice, true)) {
                 echo '<div class="notice notice-error"><p>' . __(
                         'The Wingu API Key is incorrect. Enter valid key'
@@ -670,6 +706,7 @@ class WinguAdmin
 
             $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponentId, 0));
             $winguApi->content()->createMyPack(new RequestPack($createdContent->id(), $createdDeck->id(), 'en'));
+//            todo: proper locale
             $winguApi->content()->attachMyContentToChannelsExclusively(
                 $createdContent->id(),
                 new PrivateContentChannels($_POST['wingu_post_triggers'])

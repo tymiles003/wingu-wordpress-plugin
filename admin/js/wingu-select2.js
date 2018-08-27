@@ -3,6 +3,17 @@ jQuery(document).ready(function($) {
     let $content = $('#wingu_post_content');
     $triggers.select2({
         width: '100%',
+        ajax: {
+            url: ajaxurl,
+            dataType: 'json',
+            method: 'POST',
+            delay: 250,
+            data: function (params) {
+                return {
+                    'name': params.term
+                };
+            }
+        }
         // wingu.api_url
         // todo: ajax trigger search
     });
