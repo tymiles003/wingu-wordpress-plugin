@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Plugin Name: Wingu
  * Plugin URI: https://www.wingu.de/en/developer
- * Description: Describe me here
+ * Description: Allows you to seamlessly link content you have created on Wordpress Platform to Triggers you manage through Wingu Proximity Platform.
  * Version: 1.0
  * Author: Wingu
  * Author URI: https://www.wingu.de
@@ -33,17 +33,31 @@ if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-function activate_wingu()
+function wingu_activate()
 {
     WinguActivator::activate();
 }
 
-function deactivate_wingu()
+function wingu_deactivate()
 {
     WinguDeactivator::deactivate();
 }
 
-register_activation_hook(__FILE__, 'activate_wingu');
-register_deactivation_hook(__FILE__, 'deactivate_wingu');
+function wingu_uninstall()
+{
+    delete_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID);
+    delete_option(Wingu::GLOBAL_KEY_API_KEY);
+    delete_option(Wingu::GLOBAL_KEY_LINK_BACK);
+    delete_option(Wingu::GLOBAL_KEY_LINK_BACK_TEXT);
+    delete_option(Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
+    delete_post_meta_by_key(Wingu::POST_KEY_LINK_BACK);
+    delete_post_meta_by_key(Wingu::POST_KEY_DISPLAY_PREFERENCE);
+    delete_post_meta_by_key(Wingu::POST_KEY_CONTENT);
+    delete_post_meta_by_key(Wingu::POST_KEY_COMPONENT);
+}
+
+register_activation_hook(__FILE__, 'wingu_activate');
+register_deactivation_hook(__FILE__, 'wingu_deactivate');
+register_uninstall_hook(__FILE__, 'wingu_uninstall');
 
 Wingu::instance()->run();

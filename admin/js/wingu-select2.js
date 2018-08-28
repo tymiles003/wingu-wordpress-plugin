@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
     let $triggers = $('#wingu_post_triggers');
     let $content = $('#wingu_post_content');
     $triggers.select2({
+        minimumInputLength: 3,
         width: '100%',
         ajax: {
             url: ajaxurl,
@@ -10,12 +11,11 @@ jQuery(document).ready(function($) {
             delay: 250,
             data: function (params) {
                 return {
-                    'name': params.term
+                    'name': params.term,
+                    'action': "get_wingu_private_triggers"
                 };
             }
         }
-        // wingu.api_url
-        // todo: ajax trigger search
     });
     $content.select2({
         width: '100%'

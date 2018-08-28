@@ -10,13 +10,13 @@
     }
   ],
   "require": {
-    "composer/installers": "v1.0.6",
+    "composer/installers": "^1.5",
     "php-http/curl-client": "^1.7",
-    "wingu/wingu-sdk-php": "dev-channels_patch_method",
-    "zendframework/zend-diactoros": "^1.7@dev",
-    "phpdocumentor/reflection-docblock": "^5.0@dev",
+    "wingu/wingu-sdk-php": "dev-master",
+    "zendframework/zend-diactoros": "^1.8",
+    "phpdocumentor/reflection-docblock": "^4.3",
     "guzzlehttp/psr7": "^1.4",
-    "guzzlehttp/guzzle": "^6.3@dev"
+    "guzzlehttp/guzzle": "^6.3"
   },
   "repositories": [
     {

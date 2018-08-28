@@ -6,6 +6,7 @@ namespace Wingu\Plugin\Wordpress;
 
 use Wingu\Engine\SDK\Model\Request\Card as RequestCard;
 use Wingu\Engine\SDK\Api\Exception\HttpClient\Unauthorized;
+use Wingu\Engine\SDK\Model\Request\Channel\PrivateChannelsFilter;
 use Wingu\Engine\SDK\Model\Request\Component\CMS;
 use Wingu\Engine\SDK\Model\Request\Content\Pack as RequestPack;
 use Wingu\Engine\SDK\Model\Request\Content\PrivateContentChannels;
@@ -14,10 +15,10 @@ use Wingu\Engine\SDK\Model\Response\Channel\Beacon\PrivateBeacon;
 use Wingu\Engine\SDK\Model\Response\Channel\Geofence\PrivateGeofence;
 use Wingu\Engine\SDK\Model\Response\Channel\Nfc\PrivateNfc;
 use Wingu\Engine\SDK\Model\Response\Channel\QrCode\PrivateQrCode;
-use Wingu\Engine\SDK\Model\Request\Channel\Beacon\PrivateNfc as RequestNfc;
+use Wingu\Engine\SDK\Model\Request\Channel\Nfc\PrivateNfc as RequestNfc;
 use Wingu\Engine\SDK\Model\Request\Channel\Beacon\PrivateBeacon as RequestBeacon;
-use Wingu\Engine\SDK\Model\Request\Channel\Beacon\PrivateQrCode as RequestQrCode;
-use Wingu\Engine\SDK\Model\Request\Channel\Beacon\PrivateGeofence as RequestGeofence;
+use Wingu\Engine\SDK\Model\Request\Channel\QrCode\PrivateQrCode as RequestQrCode;
+use Wingu\Engine\SDK\Model\Request\Channel\Geofence\PrivateGeofence as RequestGeofence;
 
 class WinguAdmin
 {
@@ -77,34 +78,37 @@ class WinguAdmin
         wp_enqueue_script('wingu-select2');
     }
 
-    public function get_wingu_private_triggers() : array
+    public function get_wingu_private_triggers() : void
     {
         try {
-            $response = Wingu::$API->channel()->myChannels();
+            $response = Wingu::$API->channel()->myChannels(new PrivateChannelsFilter(null, $_POST['name']));
             $response->current();
             $all_triggers    = [];
+            $result = [];
             while ($response->valid()) {
                 $id        = $response->current()->id();
                 $name      = $response->current()->name();
                 $contentid = $response->current()->content() ? $response->current()->content()->id() : 'No Content ID';
+
+                switch (\get_class($response->current())) {
+                    case PrivateGeofence::class:
+                        $name .= ' (Geofence)';
+                        break;
+                    case PrivateQrCode::class:
+                        $name .= ' (QR Code)';
+                        break;
+                    case PrivateNfc::class:
+                        $name .= ' (NFC)';
+                        break;
+                    case PrivateBeacon::class:
+                        $name .= ' (Beacon)';
+                        break;
+                }
                 $all_triggers[] = (object)['id' => $id, 'text' => $name, 'content' => $contentid];
-//                switch (\get_class($response->current())) {
-//                    case PrivateGeofence::class:
-//                        $all_triggers[self::GEOFENCE][] = new WinguTrigger($id, $name, $contentid);
-//                        break;
-//                    case PrivateQrCode::class:
-//                        $all_triggers[self::QRCODE][] = new WinguTrigger($id, $name, $contentid);
-//                        break;
-//                    case PrivateNfc::class:
-//                        $all_triggers[self::NFC][] = new WinguTrigger($id, $name, $contentid);
-//                        break;
-//                    case PrivateBeacon::class:
-//                        $all_triggers[self::BEACON][] = new WinguTrigger($id, $name, $contentid);
-//                        break;
-//                }
                 $response->next();
             }
-            return $all_triggers;
+            $result['results'] = $all_triggers;
+            echo \json_encode($result);
         } catch (\Exception $exception) {
         }
         wp_die();
@@ -288,6 +292,7 @@ class WinguAdmin
                                 new \Wingu\Engine\SDK\Model\Request\Deck\Deck($post->post_title, null, null)
                             );
                             $template       = $winguApi->contentTemplate()->templates()->current()->id();
+
                             $createdContent = $winguApi->content()->createContent(
                                 new \Wingu\Engine\SDK\Model\Request\Content\PrivateContent($template)
                             );
@@ -295,6 +300,7 @@ class WinguAdmin
 
                             $winguApi->card()->addCardToDeck(new RequestCard($createdDeck->id(), $createdComponentId,
                                 0));
+                            $winguApi->content()->createMyPack(new RequestPack($createdContent->id(), $createdDeck->id(), 'en'));
 
                             $type = strtolower($_REQUEST['type']);
                             switch ($type) {
@@ -385,49 +391,49 @@ class WinguAdmin
         </select>
         <div>
             <select id="wingu_post_triggers" name="wingu_post_triggers[]" multiple>
-                <?php
-                try {
-                    $response = $winguChannelApi->myChannels();
-                    $response->current();
-                    $all_triggers    = [];
-                    $current_content = get_post_meta($post->ID, Wingu::POST_KEY_CONTENT, true);
-                    while ($response->valid()) {
-                        $id        = $response->current()->id();
-                        $name      = $response->current()->name();
-                        $contentid = $response->current()->content() ? $response->current()->content()->id() : 'No Content ID';
-                        switch (\get_class($response->current())) {
-                            case PrivateGeofence::class:
-                                $all_triggers[self::GEOFENCE][] = new WinguTrigger($id, $name, $contentid);
-                                break;
-                            case PrivateQrCode::class:
-                                $all_triggers[self::QRCODE][] = new WinguTrigger($id, $name, $contentid);
-                                break;
-                            case PrivateNfc::class:
-                                $all_triggers[self::NFC][] = new WinguTrigger($id, $name, $contentid);
-                                break;
-                            case PrivateBeacon::class:
-                                $all_triggers[self::BEACON][] = new WinguTrigger($id, $name, $contentid);
-                                break;
-                        }
-                        $response->next();
-                    }
-                    ?>
-                    <?php foreach ($all_triggers as $type => $triggers): ?>
-                        <optgroup label="<?php echo $type; ?>">
-                            <?php foreach ($triggers as $trigger): ?>
-                                <option value="<?php echo $trigger->id() ?>" <?php if ($trigger->content() === $current_content) {
-                                    echo 'selected';
-                                } ?>><?php echo $trigger->name(); ?></option>
-
-                            <?php endforeach; ?>
-                        </optgroup>
-                    <?php endforeach; ?>
-                    <?php
-                } catch (Unauthorized $exception) {
-                    update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
-                    update_option(Wingu::GLOBAL_KEY_API_KEY, '');
-                }
-                ?>
+                <!--                --><?php
+                //                try {
+                //                    $response = $winguChannelApi->myChannels();
+                //                    $response->current();
+                //                    $all_triggers    = [];
+                //                    $current_content = get_post_meta($post->ID, Wingu::POST_KEY_CONTENT, true);
+                //                    while ($response->valid()) {
+                //                        $id        = $response->current()->id();
+                //                        $name      = $response->current()->name();
+                //                        $contentid = $response->current()->content() ? $response->current()->content()->id() : 'No Content ID';
+                //                        switch (\get_class($response->current())) {
+                //                            case PrivateGeofence::class:
+                //                                $all_triggers[self::GEOFENCE][] = new WinguTrigger($id, $name, $contentid);
+                //                                break;
+                //                            case PrivateQrCode::class:
+                //                                $all_triggers[self::QRCODE][] = new WinguTrigger($id, $name, $contentid);
+                //                                break;
+                //                            case PrivateNfc::class:
+                //                                $all_triggers[self::NFC][] = new WinguTrigger($id, $name, $contentid);
+                //                                break;
+                //                            case PrivateBeacon::class:
+                //                                $all_triggers[self::BEACON][] = new WinguTrigger($id, $name, $contentid);
+                //                                break;
+                //                        }
+                //                        $response->next();
+                //                    }
+                //                    ?>
+                <!--                    --><?php //foreach ($all_triggers as $type => $triggers): ?>
+                <!--                        <optgroup label="--><?php //echo $type; ?><!--">-->
+                <!--                            --><?php //foreach ($triggers as $trigger): ?>
+                <!--                                <option value="--><?php //echo $trigger->id() ?><!--" --><?php //if ($trigger->content() === $current_content) {
+                //                                    echo 'selected';
+                //                                } ?><!-->--><?php //echo $trigger->name(); ?><!--</option>-->
+                <!---->
+                <!--                            --><?php //endforeach; ?>
+                <!--                        </optgroup>-->
+                <!--                    --><?php //endforeach; ?>
+                <!--                    --><?php
+                //                } catch (Unauthorized $exception) {
+                //                    update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
+                //                    update_option(Wingu::GLOBAL_KEY_API_KEY, '');
+                //                }
+                //                ?>
             </select>
         </div>
         <div>
