@@ -44,11 +44,11 @@ class WinguListTable extends ListTable
     {
         $actions = [];
         if ($item['contentid'] === null) {
-            $actions['link'] = sprintf('<a href="?page=%s&tab=%s&action=%s&trigger=%s&name=%s&type=%s">Link</a>',
-                $_GET['page'], 'link', 'link', $item['id'], $item['name'], $item['type']);
+            $actions['link'] = sprintf('<a href="?page=wingu-options&tab=%s&action=%s&trigger=%s&name=%s&type=%s">Link</a>',
+                'link', 'link', $item['id'], $item['name'], $item['type']);
         } else {
-            $actions['unlink'] = sprintf('<a href="?page=%s&tab=%s&action=%s&trigger=%s&name=%s&type=%s&content=%s">Unlink</a>',
-                $_GET['page'], 'link', 'unlink', $item['id'], $item['name'], $item['type'], $item['content']);
+            $actions['unlink'] = sprintf('<a href="?page=wingu-options&tab=%s&action=%s&trigger=%s&name=%s&type=%s&contentid=%s&content=%s">Unlink</a>',
+                'link', 'unlink', $item['id'], $item['name'], $item['type'], $item['contentid'], $item['content']);
         }
 
         return sprintf('%1$s %2$s',

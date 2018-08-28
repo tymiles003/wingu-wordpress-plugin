@@ -212,9 +212,20 @@ class WinguAdmin
                             );
                             break;
                     }
-                    echo __('Successfully unlinked content entitled ',
-                            Wingu::name()) . $_REQUEST['content'] . __(' from Your Wingu Trigger ',
-                            Wingu::name()) . $_REQUEST['name'] . '.';
+
+                    $args = [
+                        'meta_key' => Wingu::POST_KEY_CONTENT,
+                        'meta_value' => $_REQUEST['contentid'],
+                        'post_type' => 'any',
+                        'posts_per_page' => -1
+                    ];
+                    $posts = get_posts($args);
+                    foreach($posts as $post) {
+                        update_post_meta($post->ID, Wingu::POST_KEY_CONTENT, '');
+                    }
+                    echo __('Successfully unlinked content entitled ', Wingu::name())
+                        . '<strong>' . $_REQUEST['content'] . '</strong>' . __(' from Your Wingu Trigger ', Wingu::name())
+                        . '<strong>' . $_REQUEST['name'] . '</strong>';
                 } elseif ($_REQUEST['action'] === 'link') {
                     if (! isset($_REQUEST['wingu_link_content'])) {
                         ?>
@@ -329,8 +340,8 @@ class WinguAdmin
                                     break;
                             }
 
-                            echo __('Trigger ', Wingu::name()) . $_REQUEST['name'] . __(' linked to ',
-                                    Wingu::name()) . $post->post_title;
+                            echo __('Trigger ', Wingu::name()) . '<strong>' . $_REQUEST['name'] . '</strong>'
+                                . __(' linked to ', Wingu::name()) . '<strong>' . $post->post_title . '</strong>';
                         } catch (\Exception $exception) {
                             echo $exception->getTraceAsString();
                             echo 'Something went wrong. Try again later.';
@@ -355,7 +366,7 @@ class WinguAdmin
 
     public function add_wingu_post_meta_box($post) : void
     {
-        $winguChannelApi = Wingu::$API->channel();
+//        $winguChannelApi = Wingu::$API->channel();
         $winguContentApi = Wingu::$API->content();
 
         if (! current_user_can('edit_others_posts')) {
@@ -614,7 +625,7 @@ class WinguAdmin
             $content = get_post_meta($postId, Wingu::POST_KEY_CONTENT, true);
             if ($content !== '') {
 //              todo: Wingu icon
-                echo '<img height="40" width="40" src="' . plugins_url(Wingu::name() . '/admin/wingu.jpg') . '">';
+                echo '<img src="' . plugins_url(Wingu::name() . '/admin/wingu.png') . '">';
             }
         }
     }
