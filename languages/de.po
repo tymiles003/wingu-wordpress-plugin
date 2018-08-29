@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wingu-wordpress-plugin\n"
 "Report-Msgid-Bugs-To: Wingu <hilfe@wingu.de>\n"
-"POT-Creation-Date: 2018-08-06 10:26+0200\n"
+"POT-Creation-Date: 2018-08-29 12:29+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: Wingu Team <hilfe@wingu.de>\n"
@@ -20,162 +20,213 @@ msgstr ""
 "X-Generator: Poedit 2.1.1\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: admin/WinguAdmin.php:61 admin/WinguAdmin.php:83 admin/WinguAdmin.php:138
-#: admin/WinguAdmin.php:247
+#: Wingu.php:30
+msgid "You need to run 'composer install' in plugin directory first."
+msgstr ""
+
+#: admin/WinguAdmin.php:109 admin/WinguAdmin.php:131 admin/WinguAdmin.php:386
+#: admin/WinguAdmin.php:462
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: admin/WinguAdmin.php:89 admin/WinguAdmin.php:128
+#: admin/WinguAdmin.php:138 admin/WinguAdmin.php:376
 msgid "Settings"
 msgstr ""
 
-#: admin/WinguAdmin.php:91
-msgid "Triggers"
+#: admin/WinguAdmin.php:143 admin/WinguAdmin.php:610
+msgid "Wingu Triggers"
 msgstr ""
 
-#: admin/WinguAdmin.php:92
-msgid "Link Content"
+#: admin/WinguAdmin.php:147
+msgid "Linking contents to Wingu Triggers"
 msgstr ""
 
-#: admin/WinguAdmin.php:111
-msgid "Search"
-msgstr ""
-
-#: admin/WinguAdmin.php:121
-msgid "Link Content to Triggers"
-msgstr ""
-
-#: admin/WinguAdmin.php:142
-msgid "Invalid Wingu API Key."
-msgstr ""
-
-#: admin/WinguAdmin.php:152 admin/WinguAdmin.php:350
-msgid "Content"
-msgstr ""
-
-#: admin/WinguAdmin.php:154 admin/WinguAdmin.php:353
-msgid "Excerpt"
-msgstr ""
-
-#: admin/WinguAdmin.php:157 admin/WinguAdmin.php:311
-msgid "Link back"
+#: admin/WinguAdmin.php:157
+msgid "Save changes"
 msgstr ""
 
 #: admin/WinguAdmin.php:160
+msgid "Triggers"
+msgstr ""
+
+#: admin/WinguAdmin.php:167
+msgid "Search"
+msgstr ""
+
+#: admin/WinguAdmin.php:175
+msgid "Link Content to Triggers"
+msgstr ""
+
+#: admin/WinguAdmin.php:219
+msgid "Successfully unlinked content entitled "
+msgstr ""
+
+#: admin/WinguAdmin.php:220
+msgid "from your Wingu Trigger "
+msgstr ""
+
+#: admin/WinguAdmin.php:231
+msgid "Trigger"
+msgstr ""
+
+#: admin/WinguAdmin.php:238 admin/WinguAdmin.php:406 admin/WinguAdmin.php:571
+#: includes/WinguListTable.php:72
+msgid "Content"
+msgstr ""
+
+#: admin/WinguAdmin.php:250
+msgid "Link Content to Wingu Trigger"
+msgstr ""
+
+#: admin/WinguAdmin.php:351
+msgid "Trigger "
+msgstr ""
+
+#: admin/WinguAdmin.php:352
+msgid "linked to "
+msgstr ""
+
+#: admin/WinguAdmin.php:355
+msgid "Something went wrong. Please contact support."
+msgstr ""
+
+#: admin/WinguAdmin.php:362
+msgid ""
+"You can link WordPress content to Wingu Triggers not only in Post/Page view, "
+"but also directly from Triggers list in Settings. Just click on Link "
+"displayed when hovering over selected Trigger. Global settings will be taken "
+"into account over post-specific ones."
+msgstr ""
+
+#: admin/WinguAdmin.php:390
+msgid "Invalid Wingu API Key."
+msgstr ""
+
+#: admin/WinguAdmin.php:409 admin/WinguAdmin.php:575
+msgid "Excerpt"
+msgstr ""
+
+#: admin/WinguAdmin.php:412 admin/WinguAdmin.php:530
+msgid "Link back"
+msgstr ""
+
+#: admin/WinguAdmin.php:415
 msgid "Do nothing"
 msgstr ""
 
-#: admin/WinguAdmin.php:161
-msgid "Update content from Wordpress"
+#: admin/WinguAdmin.php:416
+msgid "Update content from WP on Wingu Platform"
 msgstr ""
 
-#: admin/WinguAdmin.php:162
+#: admin/WinguAdmin.php:417
 msgid "Create new Content and link to Trigger"
 msgstr ""
 
-#: admin/WinguAdmin.php:163
-msgid "Add to existing Content"
+#: admin/WinguAdmin.php:418
+msgid "Add WP Content to existing Wingu Content"
 msgstr ""
 
-#: admin/WinguAdmin.php:222
+#: admin/WinguAdmin.php:435
 msgid "No ID"
 msgstr ""
 
-#: admin/WinguAdmin.php:223
+#: admin/WinguAdmin.php:436
 msgid "No title"
 msgstr ""
 
-#: admin/WinguAdmin.php:236
+#: admin/WinguAdmin.php:451
 msgid "Go to plugin options"
 msgstr ""
 
-#: admin/WinguAdmin.php:286
+#: admin/WinguAdmin.php:505
 msgid "Wingu Settings"
 msgstr ""
 
-#: admin/WinguAdmin.php:293
+#: admin/WinguAdmin.php:512
 msgid "API Key"
 msgstr ""
 
-#: admin/WinguAdmin.php:302
+#: admin/WinguAdmin.php:521
 msgid "Display"
 msgstr ""
 
-#: admin/WinguAdmin.php:320
+#: admin/WinguAdmin.php:539
 msgid "Link back text"
 msgstr ""
 
-#: admin/WinguAdmin.php:335
+#: admin/WinguAdmin.php:555
 msgid ""
 "Enter your API Key. Choose whether you want to connect to triggers whole "
 "posts or only excerpts. Select if links back to your site should be added at "
 "the end of your texts."
 msgstr ""
 
-#: admin/WinguAdmin.php:342
+#: admin/WinguAdmin.php:563
 msgid "Validate"
 msgstr ""
 
-#: admin/WinguAdmin.php:368
+#: admin/WinguAdmin.php:590
 msgid "Existing options include"
 msgstr ""
 
-#: admin/WinguAdmin.php:387
-msgid "Wingu Triggers"
-msgstr ""
-
-#: admin/WinguAdmin.php:392
+#: admin/WinguAdmin.php:627
 msgid "The Wingu API Key is incorrect. Enter valid key"
 msgstr ""
 
-#: admin/WinguAdmin.php:392
+#: admin/WinguAdmin.php:630
 msgid "here"
 msgstr ""
 
-#: includes/ListTable.php:334
-msgid "No items found."
+#: includes/ListTable.php:259
+msgid "No triggers found."
 msgstr ""
 
-#: includes/ListTable.php:541 includes/ListTable.php:1195
+#: includes/ListTable.php:364 includes/ListTable.php:925
 msgid "Show more details"
 msgstr ""
 
-#: includes/ListTable.php:620 includes/ListTable.php:1220
+#: includes/ListTable.php:429 includes/ListTable.php:948
+#: includes/WinguListTable.php:206
 #, php-format
-msgid "%s item"
-msgid_plural "%s items"
+msgid "1 trigger"
+msgid_plural "%s triggers"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/ListTable.php:657
+#: includes/ListTable.php:466
 msgid "First page"
 msgstr ""
 
-#: includes/ListTable.php:667
+#: includes/ListTable.php:476
 msgid "Previous page"
 msgstr ""
 
-#: includes/ListTable.php:674 includes/ListTable.php:677
+#: includes/ListTable.php:483 includes/ListTable.php:486
 msgid "Current Page"
 msgstr ""
 
-#: includes/ListTable.php:683
+#: includes/ListTable.php:492
 #, php-format
 msgctxt "paging"
 msgid "%1$s of %2$s"
 msgstr ""
 
-#: includes/ListTable.php:691
+#: includes/ListTable.php:500
 msgid "Next page"
 msgstr ""
 
-#: includes/ListTable.php:701
+#: includes/ListTable.php:510
 msgid "Last page"
 msgstr ""
 
-#: includes/WinguListTable.php:211
-#, php-format
-msgid "1 item"
-msgid_plural "%s items"
-msgstr[0] ""
-msgstr[1] ""
+#: includes/WinguListTable.php:70
+msgid "Name"
+msgstr ""
+
+#: includes/WinguListTable.php:71
+msgid "Type"
+msgstr ""
+
+#: includes/WinguListTable.php:154
+msgid "No content attached"
+msgstr ""

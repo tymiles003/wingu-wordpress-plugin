@@ -426,7 +426,7 @@ class ListTable
             $this->screen->render_screen_reader_content('heading_pagination');
         }
 
-        $output = '<span class="displaying-num">' . sprintf(_n('%s trigger', '%s triggers', $total_items, Wingu::name()),
+        $output = '<span class="displaying-num">' . sprintf(_n('1 trigger', '%s triggers', $total_items, Wingu::name()),
                 number_format_i18n($total_items)) . '</span>';
 
         $current              = $this->get_pagenum();
@@ -945,7 +945,7 @@ class ListTable
 
         if (isset($this->_pagination_args['total_items'])) {
             $response['total_items_i18n'] = sprintf(
-                _n('%s item', '%s items', $this->_pagination_args['total_items']),
+                _n('1 trigger', '%s triggers', $this->_pagination_args['total_items'], Wingu::name()),
                 number_format_i18n($this->_pagination_args['total_items'])
             );
         }

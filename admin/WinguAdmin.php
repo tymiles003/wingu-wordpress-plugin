@@ -217,7 +217,7 @@ class WinguAdmin
                         update_post_meta($post->ID, Wingu::POST_KEY_CONTENT, '');
                     }
                     echo __('Successfully unlinked content entitled ', Wingu::name())
-                        .'<strong>'.$_REQUEST['content'].'</strong>'.__(' from Your Wingu Trigger ', Wingu::name())
+                        .'<strong>'.$_REQUEST['content'].'</strong> '.__('from your Wingu Trigger ', Wingu::name())
                         .'<strong>'.$_REQUEST['name'].'</strong>';
                 } elseif ($_REQUEST['action'] === 'link') {
                     if (!isset($_REQUEST['wingu_link_content'])) {
@@ -348,8 +348,8 @@ class WinguAdmin
                                     break;
                             }
 
-                            echo __('Trigger ', Wingu::name()).'<strong>'.$_REQUEST['name'].'</strong>'
-                                .__(' linked to ', Wingu::name()).'<strong>'.$post->post_title.'</strong>';
+                            echo __('Trigger ', Wingu::name()).'<strong>'.$_REQUEST['name'].'</strong> '
+                                .__('linked to ', Wingu::name()).'<strong>'.$post->post_title.'</strong>';
                         } catch (\Exception $exception) {
                             echo $exception->getTraceAsString();
                             _e('Something went wrong. Please contact support.', Wingu::name());
