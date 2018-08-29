@@ -1,216 +1,100 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: wingu-wordpress-plugin\n"
-"Report-Msgid-Bugs-To: Wingu <hilfe@wingu.de>\n"
-"POT-Creation-Date: 2018-08-29 13:16+0200\n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: Wingu Team <hilfe@wingu.de>\n"
-"Language: en\n"
-"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Textdomain-Support: yesX-Generator: Poedit 1.6.4\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;esc_html_e;esc_html_x:1,2c;esc_html__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_attr__;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;"
-"_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext:1,2;__ngettext_noop:1,2;_c,"
-"_nc:4c,1,2\n"
-"X-Poedit-Basepath: ..\n"
-"X-Generator: Poedit 2.1.1\n"
-"X-Poedit-SearchPath-0: .\n"
+"Language: en\n"
 
-#: Wingu.php:30
-msgid "run_composer_install_first"
-msgstr "You need to run 'composer install' in plugin directory first."
-
-#: admin/WinguAdmin.php:39
-msgid "options_page_title"
-msgstr "Wingu Options"
-
-#: admin/WinguAdmin.php:109 admin/WinguAdmin.php:131 admin/WinguAdmin.php:386
-#: admin/WinguAdmin.php:462
 msgid "access_denied"
 msgstr "You do not have sufficient permissions to access this page."
-
-#: admin/WinguAdmin.php:138 admin/WinguAdmin.php:376 admin/WinguAdmin.php:505
-msgid "settings"
-msgstr "Wingu Settings"
-
-#: admin/WinguAdmin.php:143 admin/WinguAdmin.php:160 admin/WinguAdmin.php:610
-msgid "triggers"
-msgstr "Wingu Triggers"
-
-#: admin/WinguAdmin.php:147 admin/WinguAdmin.php:175
-msgid "linking_contents_triggers"
-msgstr "Linking contents to Wingu Triggers"
-
-#: admin/WinguAdmin.php:157
-msgid "save"
-msgstr "Save changes"
-
-#: admin/WinguAdmin.php:167
-msgid "search"
-msgstr "Search"
-
-#: admin/WinguAdmin.php:219
-msgid "unlinked_content_named"
-msgstr "Successfully unlinked content entitled "
-
-#: admin/WinguAdmin.php:220
-msgid "unlinked_content_from"
-msgstr "from your Wingu Trigger "
-
-#: admin/WinguAdmin.php:231 admin/WinguAdmin.php:351
-msgid "trigger"
-msgstr "Trigger"
-
-#: admin/WinguAdmin.php:238 admin/WinguAdmin.php:406 admin/WinguAdmin.php:571
-#: includes/WinguListTable.php:72
-msgid "content"
-msgstr "Content"
-
-#: admin/WinguAdmin.php:250
-msgid "submit_link_content_trigger"
-msgstr "Link Content to Wingu Trigger"
-
-#: admin/WinguAdmin.php:352
-msgid "linked_to"
-msgstr "linked to "
-
-#: admin/WinguAdmin.php:355
-msgid "generic_error"
-msgstr "Something went wrong. Please contact support."
-
-#: admin/WinguAdmin.php:362
-msgid "linking_contents_triggers_description"
-msgstr ""
-"You can link WordPress content to Wingu Triggers not only in Post/Page view, "
-"but also directly from Triggers list in Settings. Just click on Link "
-"displayed when hovering over selected Trigger. Global settings will be taken "
-"into account over post-specific ones."
-
-#: admin/WinguAdmin.php:390 admin/WinguAdmin.php:627
-msgid "invalid_api_key"
-msgstr "Invalid Wingu API Key."
-
-#: admin/WinguAdmin.php:409 admin/WinguAdmin.php:575
-msgid "excerpt"
-msgstr "Excerpt"
-
-#: admin/WinguAdmin.php:412 admin/WinguAdmin.php:530
-msgid "link_back"
-msgstr "Link back"
-
-#: admin/WinguAdmin.php:415
-msgid "do_nothing"
-msgstr "Do nothing"
-
-#: admin/WinguAdmin.php:416
-msgid "update_content"
-msgstr "Update content from WP on Wingu Platform"
-
-#: admin/WinguAdmin.php:417
-msgid "create_new_content"
-msgstr "Create new Content and link to Trigger"
-
-#: admin/WinguAdmin.php:418
 msgid "add_to_existing_content"
 msgstr "Add WP Content to existing Wingu Content"
-
-#: admin/WinguAdmin.php:435
-msgid "no_id"
-msgstr "No ID"
-
-#: admin/WinguAdmin.php:436
-msgid "no_title"
-msgstr "No title"
-
-#: admin/WinguAdmin.php:451
-msgid "plugin_options_link"
-msgstr "Go to plugin options"
-
-#: admin/WinguAdmin.php:512
 msgid "api_key"
 msgstr "API Key"
-
-#: admin/WinguAdmin.php:521
+msgid "content"
+msgstr "Content"
+msgid "create_new_content"
+msgstr "Create new Content and link to Trigger"
+msgid "current_page"
+msgstr "Current page"
 msgid "display"
 msgstr "Display"
-
-#: admin/WinguAdmin.php:539
-msgid "link_back_text"
-msgstr "Link back text"
-
-#: admin/WinguAdmin.php:555
-msgid "wingu_settings_description"
-msgstr ""
-"Enter your API Key. Choose whether you want to connect to triggers whole "
-"posts or only excerpts. Select if links back to your site should be added at "
-"the end of your texts."
-
-#: admin/WinguAdmin.php:563
-msgid "validate"
-msgstr "Validate"
-
-#: admin/WinguAdmin.php:590
-msgid "link_back_placeholders"
-msgstr "Existing options include"
-
-#: admin/WinguAdmin.php:630
+msgid "do_nothing"
+msgstr "Do nothing"
+msgid "excerpt"
+msgstr "Excerpt"
+msgid "first_page"
+msgstr "First page"
+msgid "generic_error"
+msgstr "Something went wrong. Please contact support."
 msgid "here"
 msgstr "here"
-
-#: includes/ListTable.php:259
+msgid "invalid_api_key"
+msgstr "Invalid Wingu API Key."
+msgid "last_page"
+msgstr "Last page"
+msgid "link_back"
+msgstr "Link back"
+msgid "link_back_placeholders"
+msgstr "Existing options include"
+msgid "link_back_text"
+msgstr "Link back text"
+msgid "linked_to"
+msgstr "linked to "
+msgid "linking_contents_triggers"
+msgstr "Linking contents to Wingu Triggers"
+msgid "linking_contents_triggers_description"
+msgstr "You can link WordPress content to Wingu Triggers not only in Post/Page view, but also directly from Triggers list in Settings. Just click on Link displayed when hovering over selected Trigger. Global settings will be taken into account over post-specific ones."
+msgid "name"
+msgstr "Name"
+msgid "next_page"
+msgstr "Next page"
+msgid "no_content_attached"
+msgstr "No content attached"
+msgid "no_id"
+msgstr "No ID"
+msgid "no_title"
+msgstr "No title"
 msgid "no_triggers"
 msgstr "No triggers found."
-
-#: includes/ListTable.php:364 includes/ListTable.php:925
-msgid "show_details"
-msgstr "Show more details"
-
-#: includes/ListTable.php:429 includes/ListTable.php:948
-#: includes/WinguListTable.php:206
-msgid "single_trigger"
+msgid "options_page_title"
+msgstr "Wingu Options"
+msgid "page_x_of_y"
+msgstr "%1$s of %2$s"
+msgid "plugin_options_link"
+msgstr "Go to plugin options"
+msgid "plural_trigger"
 msgid_plural "plural_trigger"
 msgstr[0] "1 trigger"
 msgstr[1] "%s triggers"
-
-#: includes/ListTable.php:466
-msgid "first_page"
-msgstr "First page"
-
-#: includes/ListTable.php:476
 msgid "previous_page"
 msgstr "Previous page"
-
-#: includes/ListTable.php:483 includes/ListTable.php:486
-msgid "current_page"
-msgstr "Current page"
-
-#: includes/ListTable.php:492
-#, php-format
-msgctxt "paging"
-msgid "page_x_of_y"
-msgstr "%1$s of %2$s"
-
-#: includes/ListTable.php:500
-msgid "next_page"
-msgstr "Next page"
-
-#: includes/ListTable.php:510
-msgid "last_page"
-msgstr "Last page"
-
-#: includes/WinguListTable.php:70
-msgid "name"
-msgstr "Name"
-
-#: includes/WinguListTable.php:71
+msgid "run_composer_install_first"
+msgstr "You need to run 'composer install' in plugin directory first."
+msgid "save"
+msgstr "Save changes"
+msgid "search"
+msgstr "Search"
+msgid "settings"
+msgstr "Wingu Settings"
+msgid "show_details"
+msgstr "Show more details"
+msgid "single_trigger"
+msgstr "1 trigger"
+msgid "submit_link_content_trigger"
+msgstr "Link Content to Wingu Trigger"
+msgid "trigger"
+msgstr "Trigger"
+msgid "triggers"
+msgstr "Wingu Triggers"
 msgid "type"
 msgstr "Type"
-
-#: includes/WinguListTable.php:154
-msgid "no_content_attached"
-msgstr "No content attached"
+msgid "unlinked_content_from"
+msgstr "from your Wingu Trigger "
+msgid "unlinked_content_named"
+msgstr "Successfully unlinked content entitled "
+msgid "update_content"
+msgstr "Update content from WP on Wingu Platform"
+msgid "validate"
+msgstr "Validate"
+msgid "wingu_settings_description"
+msgstr "Enter your API Key. Choose whether you want to connect to triggers whole posts or only excerpts. Select if links back to your site should be added at the end of your texts."
