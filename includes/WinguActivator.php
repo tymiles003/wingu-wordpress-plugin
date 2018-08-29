@@ -12,11 +12,10 @@ class WinguActivator
             return;
         }
 
-        if (!get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID)) {
-            update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, false);
-        }
+        update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
+        update_option(Wingu::GLOBAL_KEY_API_KEY, '');
+
         update_option(Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE, 'content');
         update_option(Wingu::GLOBAL_KEY_LINK_BACK, 'false');
-        update_option(Wingu::GLOBAL_KEY_LINK_BACK_TEXT, '');
     }
 }

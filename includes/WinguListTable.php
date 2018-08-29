@@ -67,9 +67,9 @@ class WinguListTable extends ListTable
     public function get_columns() : array
     {
         return [
-            'name' => 'Name',
-            'type' => 'Type',
-            'content' => 'Content',
+            'name' => __('Name', Wingu::name()),
+            'type' => __('Type', Wingu::name()),
+            'content' => __('Content', Wingu::name())
         ];
     }
 
@@ -151,7 +151,7 @@ class WinguListTable extends ListTable
                 'id' => $channel->id(),
                 'name' => $channel->name(),
                 'type' => $type,
-                'content' => $content ? $content->title() : '<i>No content attached</i>',
+                'content' => $content ? $content->title() : '<i>' . __('No content attached', Wingu::name()) . '</i>',
                 'contentid' => $content ? $content->id() : null,
             ];
         }
@@ -161,7 +161,6 @@ class WinguListTable extends ListTable
 
     public function display() : void
     {
-
         wp_nonce_field('ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce');
         echo '<input id="order" type="hidden" name="order" value="' . $this->_pagination_args['order'] . '" />';
         echo '<input id="orderby" type="hidden" name="orderby" value="' . $this->_pagination_args['orderby'] . '" />';
@@ -171,7 +170,6 @@ class WinguListTable extends ListTable
 
     public function ajax_response() : void
     {
-
         check_ajax_referer('ajax-wingu-triggers-nonce', '_ajax_wingu_triggers_nonce');
 
         $this->prepare_items();

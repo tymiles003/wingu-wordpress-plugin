@@ -35,5 +35,4 @@ class WinguPublic
     {
         return $this->version;
     }
-
 }
