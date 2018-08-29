@@ -67,9 +67,9 @@ class WinguListTable extends ListTable
     public function get_columns() : array
     {
         return [
-            'name' => __('Name', Wingu::name()),
-            'type' => __('Type', Wingu::name()),
-            'content' => __('Content', Wingu::name())
+            'name' => __('name', Wingu::name()),
+            'type' => __('type', Wingu::name()),
+            'content' => __('content', Wingu::name())
         ];
     }
 
@@ -151,7 +151,7 @@ class WinguListTable extends ListTable
                 'id' => $channel->id(),
                 'name' => $channel->name(),
                 'type' => $type,
-                'content' => $content ? $content->title() : '<i>' . __('No content attached', Wingu::name()) . '</i>',
+                'content' => $content ? $content->title() : '<i>' . __('no_content_attached', Wingu::name()) . '</i>',
                 'contentid' => $content ? $content->id() : null,
             ];
         }
@@ -203,7 +203,7 @@ class WinguListTable extends ListTable
         $response['column_headers']       = $headers;
 
         if ($total_items !== null) {
-            $response['total_items_i18n'] = sprintf(_n('1 trigger', '%s triggers', $total_items),
+            $response['total_items_i18n'] = sprintf(_n('single_trigger', 'plural_trigger', $total_items),
                 number_format_i18n($total_items));
         }
 

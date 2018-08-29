@@ -27,7 +27,7 @@ if (! defined('ABSPATH')) {
 define('WINGU_VERSION', '1.0.0');
 
 if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
-    _e('You need to run \'composer install\' in plugin directory first.', Wingu::name());
+    _e('run_composer_install_first', Wingu::name());
     exit;
 }
 

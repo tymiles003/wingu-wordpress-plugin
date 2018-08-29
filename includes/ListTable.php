@@ -256,7 +256,7 @@ class ListTable
      */
     public function no_items() : void
     {
-        _e('No triggers found.', Wingu::name());
+        _e('no_triggers', Wingu::name());
     }
 
     /**
@@ -361,7 +361,7 @@ class ListTable
         }
         $out .= '</div>';
 
-        $out .= '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __('Show more details', Wingu::name()) . '</span></button>';
+        $out .= '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __('show_details', Wingu::name()) . '</span></button>';
 
         return $out;
     }
@@ -426,7 +426,7 @@ class ListTable
             $this->screen->render_screen_reader_content('heading_pagination');
         }
 
-        $output = '<span class="displaying-num">' . sprintf(_n('1 trigger', '%s triggers', $total_items, Wingu::name()),
+        $output = '<span class="displaying-num">' . sprintf(_n('single_trigger', 'plural_trigger', $total_items, Wingu::name()),
                 number_format_i18n($total_items)) . '</span>';
 
         $current              = $this->get_pagenum();
@@ -463,7 +463,7 @@ class ListTable
         } else {
             $page_links[] = sprintf("<a class='first-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(remove_query_arg('paged', $current_url)),
-                __('First page', Wingu::name()),
+                __('first_page', Wingu::name()),
                 '&laquo;'
             );
         }
@@ -473,23 +473,23 @@ class ListTable
         } else {
             $page_links[] = sprintf("<a class='prev-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(add_query_arg('paged', max(1, $current - 1), $current_url)),
-                __('Previous page', Wingu::name()),
+                __('previous_page', Wingu::name()),
                 '&lsaquo;'
             );
         }
 
         if ($which === 'bottom') {
             $html_current_page  = $current;
-            $total_pages_before = '<span class="screen-reader-text">' . __('Current Page', Wingu::name()) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
+            $total_pages_before = '<span class="screen-reader-text">' . __('current_page', Wingu::name()) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
         } else {
             $html_current_page = sprintf("%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
-                '<label for="current-page-selector" class="screen-reader-text">' . __('Current Page', Wingu::name()) . '</label>',
+                '<label for="current-page-selector" class="screen-reader-text">' . __('current_page', Wingu::name()) . '</label>',
                 $current,
                 \strlen((string)$total_pages)
             );
         }
         $html_total_pages = sprintf("<span class='total-pages'>%s</span>", number_format_i18n($total_pages));
-        $page_links[]     = $total_pages_before . sprintf(_x('%1$s of %2$s', 'paging', Wingu::name()), $html_current_page,
+        $page_links[]     = $total_pages_before . sprintf(_x('page_x_of_y', 'paging', Wingu::name()), $html_current_page,
                 $html_total_pages) . $total_pages_after;
 
         if ($disable_next) {
@@ -497,7 +497,7 @@ class ListTable
         } else {
             $page_links[] = sprintf("<a class='next-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(add_query_arg('paged', min($total_pages, $current + 1), $current_url)),
-                __('Next page', Wingu::name()),
+                __('next_page', Wingu::name()),
                 '&rsaquo;'
             );
         }
@@ -507,7 +507,7 @@ class ListTable
         } else {
             $page_links[] = sprintf("<a class='last-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(add_query_arg('paged', $total_pages, $current_url)),
-                __('Last page', Wingu::name()),
+                __('last_page', Wingu::name()),
                 '&raquo;'
             );
         }
@@ -922,7 +922,7 @@ class ListTable
      */
     protected function handle_row_actions($item, $column_name, $primary) : string
     {
-        return $column_name === $primary ? '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __('Show more details', Wingu::name()) . '</span></button>' : '';
+        return $column_name === $primary ? '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __('show_details', Wingu::name()) . '</span></button>' : '';
     }
 
     /**
@@ -945,7 +945,7 @@ class ListTable
 
         if (isset($this->_pagination_args['total_items'])) {
             $response['total_items_i18n'] = sprintf(
-                _n('1 trigger', '%s triggers', $this->_pagination_args['total_items'], Wingu::name()),
+                _n('single_trigger', 'plural_trigger', $this->_pagination_args['total_items'], Wingu::name()),
                 number_format_i18n($this->_pagination_args['total_items'])
             );
         }
