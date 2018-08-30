@@ -9,6 +9,12 @@
       "email": "hilfe@wingu.de"
     }
   ],
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "discard-changes": true,
+    "preferred-install": "dist"
+  },
   "require": {
     "composer/installers": "^1.5",
     "php-http/curl-client": "^1.7",
@@ -26,12 +32,14 @@
   ],
   "require-dev": {
     "php": "^7.1"
-
   },
   "autoload": {
     "psr-4": {
-      "Wingu\\Plugin\\Wordpress\\": [ "admin", "includes", "public" ]
+      "Wingu\\Plugin\\Wordpress\\": [
+        "admin",
+        "includes",
+        "public"
+      ]
     }
-  },
-  "minimum-stability": "dev"
+  }
 }
