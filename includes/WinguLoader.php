@@ -22,7 +22,7 @@ class WinguLoader
      * @var      int      Optional    $priority         The priority at which the function should be fired.
      * @var      int      Optional    $accepted_args    The number of arguments that should be passed to the $callback.
      */
-    public function add_action($hook, $component, $callback, $priority = 10, $accepted_args = 1) : void
+    public function addAction($hook, $component, $callback, $priority = 10, $accepted_args = 1) : void
     {
         $this->actions = $this->add($this->actions, $hook, $component, $callback, $priority, $accepted_args);
     }
@@ -34,7 +34,7 @@ class WinguLoader
      * @var      int      Optional    $priority         The priority at which the function should be fired.
      * @var      int      Optional    $accepted_args    The number of arguments that should be passed to the $callback.
      */
-    public function add_filter($hook, $component, $callback, $priority = 10, $accepted_args = 1) : void
+    public function addFilter($hook, $component, $callback, $priority = 10, $accepted_args = 1) : void
     {
         $this->filters = $this->add($this->filters, $hook, $component, $callback, $priority, $accepted_args);
     }

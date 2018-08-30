@@ -1,8 +1,8 @@
 {
   "name": "wingu/wingu-wordpress-plugin",
   "type": "wordpress-plugin",
-  "description": "",
-  "license": "MIT",
+  "description": "Wingu plugin allows you to seamlessly link content you have created on WordPress Platform to Triggers you manage through Wingu Proximity Platform.",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Wingu",

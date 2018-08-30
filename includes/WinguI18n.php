@@ -9,7 +9,7 @@ class WinguI18n
     /** @var string */
     private $domain;
 
-    public function load_plugin_textdomain() : void
+    public function loadPluginTextdomain() : void
     {
         load_plugin_textdomain(
             $this->domain,
@@ -18,7 +18,7 @@ class WinguI18n
         );
     }
 
-    public function set_domain($domain) : void
+    public function setDomain($domain) : void
     {
         $this->domain = $domain;
     }

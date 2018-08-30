@@ -51,7 +51,7 @@ class Wingu
         if (\defined('WINGU_VERSION')) {
             $this::$version = WINGU_VERSION;
         } else {
-            $this::$version = '1.0.0';
+            $this::$version = '1.0';
         }
 
         $this::$basename = plugin_basename(__FILE__);
@@ -59,9 +59,9 @@ class Wingu
         $this::$name = $plugin_basename[0];
 
         $this->loader = new WinguLoader();
-        $this->set_locale();
-        $this->define_admin_hooks();
-        $this->define_public_hooks();
+        $this->setLocale();
+        $this->defineAdminHooks();
+        $this->definePublicHooks();
 
         self::$API_URL = Configuration::BACKEND_URL_SANDBOX;
         self::refreshApiKey();
@@ -87,43 +87,44 @@ class Wingu
         return self::$instance;
     }
 
-    private function set_locale(): void
+    private function setLocale(): void
     {
         $wingu_i18n = new WinguI18n();
         $wingu_i18n->set_domain(self::name());
-        $this->loader->add_action('plugins_loaded', $wingu_i18n, 'load_plugin_textdomain');
+        $this->loader->addAction('plugins_loaded', $wingu_i18n, 'load_plugin_textdomain');
     }
 
-    private function define_admin_hooks(): void
+    private function defineAdminHooks(): void
     {
         $plugin_basename = explode('/', $this::$basename);
         $plugin_name = $plugin_basename[0] . '/' . $plugin_basename[2];
         $wingu_admin = new WinguAdmin(self::name(), self::version());
-        $this->loader->add_action('admin_menu', $wingu_admin, 'wingu_menu');
-        $this->loader->add_action('admin_notices', $wingu_admin, 'wingu_api_key_notice');
-        $this->loader->add_action('admin_init', $wingu_admin, 'wingu_settings_init');
-        $this->loader->add_filter('plugin_action_links_'.$plugin_name, $wingu_admin, 'wingu_settings_link');
-        $this->loader->add_action('manage_posts_custom_column', $wingu_admin, 'wingu_custom_posts_column', 10, 2);
-        $this->loader->add_action('manage_pages_custom_column', $wingu_admin, 'wingu_custom_posts_column', 10, 2);
-        $this->loader->add_filter('manage_posts_columns', $wingu_admin, 'add_wingu_posts_column');
-        $this->loader->add_filter('manage_pages_columns', $wingu_admin, 'add_wingu_posts_column');
-        $this->loader->add_action('add_meta_boxes', $wingu_admin, 'wingu_meta_box');
-        $this->loader->add_action('post_updated', $wingu_admin, 'wingu_post_updated', 50, 2);
-        $this->loader->add_action('save_post', $wingu_admin, 'wingu_save_post_meta', 100);
-        $this->loader->add_action('wp_ajax_check_api_key', $wingu_admin, 'check_api_key');
-        $this->loader->add_action('wp_ajax_get_wingu_private_triggers', $wingu_admin, 'get_wingu_private_triggers');
-        $this->loader->add_action('wp_ajax__ajax_fetch_wingu_triggers', $wingu_admin, '_ajax_fetch_wingu_triggers_callback');
-        $this->loader->add_action('admin_footer', $wingu_admin, 'ajax_trigger_pagination_script');
+        $this->loader->addAction('admin_menu', $wingu_admin, 'wingu_menu');
+        $this->loader->addAction('admin_notices', $wingu_admin, 'wingu_api_key_notice');
+        $this->loader->addAction('admin_init', $wingu_admin, 'wingu_settings_init');
+        $this->loader->addAction('manage_posts_custom_column', $wingu_admin, 'wingu_custom_posts_column', 10, 2);
+        $this->loader->addAction('manage_pages_custom_column', $wingu_admin, 'wingu_custom_posts_column', 10, 2);
+        $this->loader->addAction('add_meta_boxes', $wingu_admin, 'wingu_meta_box');
+        $this->loader->addAction('post_updated', $wingu_admin, 'wingu_post_updated', 50, 2);
+        $this->loader->addAction('save_post', $wingu_admin, 'wingu_save_post_meta', 100);
+        $this->loader->addAction('wp_ajax_check_api_key', $wingu_admin, 'check_wingu_api_key');
+        $this->loader->addAction('wp_ajax_get_wingu_private_triggers', $wingu_admin, 'get_wingu_private_triggers');
+        $this->loader->addAction('wp_ajax__ajax_fetch_wingu_triggers', $wingu_admin, '_ajax_fetch_wingu_triggers_callback');
+        $this->loader->addAction('admin_footer', $wingu_admin, 'ajax_wingu_trigger_pagination_script');
 
-        $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_styles');
-        $this->loader->add_action('admin_enqueue_scripts', $wingu_admin, 'enqueue_scripts');
+        $this->loader->addFilter('plugin_action_links_'.$plugin_name, $wingu_admin, 'wingu_settings_link');
+        $this->loader->addFilter('manage_posts_columns', $wingu_admin, 'add_wingu_posts_column');
+        $this->loader->addFilter('manage_pages_columns', $wingu_admin, 'add_wingu_posts_column');
+
+        $this->loader->addAction('admin_enqueue_scripts', $wingu_admin, 'enqueue_styles');
+        $this->loader->addAction('admin_enqueue_scripts', $wingu_admin, 'enqueue_scripts');
     }
 
-    private function define_public_hooks(): void
+    private function definePublicHooks(): void
     {
         $wingu_public = new WinguPublic(self::name(), self::version());
-        $this->loader->add_action('wp_enqueue_scripts', $wingu_public, 'enqueue_styles');
-        $this->loader->add_action('wp_enqueue_scripts', $wingu_public, 'enqueue_scripts');
+        $this->loader->addAction('wp_enqueue_scripts', $wingu_public, 'enqueue_styles');
+        $this->loader->addAction('wp_enqueue_scripts', $wingu_public, 'enqueue_scripts');
     }
 
     public function run(): void

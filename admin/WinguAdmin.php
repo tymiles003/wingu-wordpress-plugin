@@ -36,7 +36,13 @@ class WinguAdmin
 
     public function wingu_menu() : void
     {
-        add_options_page(__('options_page_title', Wingu::name()), 'Wingu', 'manage_options', 'wingu-options', [$this, 'wingu_options']);
+        add_options_page(
+                __('options_page_title', Wingu::name()),
+                'Wingu',
+                'manage_options',
+                'wingu-options',
+                [$this, 'wingu_options']
+        );
     }
 
     public function enqueue_styles() : void
@@ -99,11 +105,13 @@ class WinguAdmin
             $result['results'] = $all_triggers;
             echo \json_encode($result);
         } catch (\Exception $exception) {
+            _e('generic_error', Wingu::name());
         }
+
         wp_die();
     }
 
-    public function check_api_key() : void
+    public function check_wingu_api_key() : void
     {
         if (!current_user_can('manage_options')) {
             wp_die(__('access_denied', Wingu::name()));
@@ -170,6 +178,7 @@ class WinguAdmin
             } catch (Unauthorized $exception) {
                 update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
                 update_option(Wingu::GLOBAL_KEY_API_KEY, '');
+                _e('generic_error', Wingu::name());
             }
         } elseif ($activeTab === 'link') {
             echo '<h2>'.__('linking_contents_triggers', Wingu::name()).'</h2>';
@@ -351,29 +360,21 @@ class WinguAdmin
                             echo __('trigger', Wingu::name()).'<strong>'.$_REQUEST['name'].'</strong> '
                                 .__('linked_to', Wingu::name()).'<strong>'.$post->post_title.'</strong>';
                         } catch (\Exception $exception) {
-                            echo $exception->getTraceAsString();
                             _e('generic_error', Wingu::name());
                         }
 
                     }
                 }
             } else {
-                _e(
-                    'linking_contents_triggers_description',
-                    Wingu::name()
-                );
+                _e('linking_contents_triggers_description', Wingu::name());
             }
         }
     }
 
     public function wingu_settings_link($links) : array
     {
-        $links[] = '<a href = "'.esc_url(
-                get_admin_url(
-                    null,
-                    'options-general.php?page=wingu-options'
-                )
-            ).'" >'.__('settings', Wingu::name()).'</a>';
+        $links[] = '<a href = "'.esc_url(get_admin_url(null, 'options-general.php?page=wingu-options')).'" >'
+            . __('settings', Wingu::name()). '</a>';
 
         return $links;
     }
@@ -394,11 +395,7 @@ class WinguAdmin
 
         wp_nonce_field(plugin_basename(__FILE__), 'wingu_nonce');
 
-        $displayPreference = $this->compareValues(
-            $post->ID,
-            Wingu::POST_KEY_DISPLAY_PREFERENCE,
-            Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE
-        );
+        $displayPreference = $this->compareValues($post->ID, Wingu::POST_KEY_DISPLAY_PREFERENCE, Wingu::GLOBAL_KEY_DISPLAY_PREFERENCE);
         $linkBack = $this->compareValues($post->ID, Wingu::POST_KEY_LINK_BACK, Wingu::GLOBAL_KEY_LINK_BACK);
         ?>
         <label for="wingu_post_display_preference"><input type="radio" name="wingu_post_display_preference"
@@ -442,13 +439,14 @@ class WinguAdmin
                 } catch (Unauthorized $exception) {
                     update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
                     update_option(Wingu::GLOBAL_KEY_API_KEY, '');
+                    _e('generic_error', Wingu::name());
                 }
                 ?>
             </select>
         </div>
         <br/>
-        <a href="<?php echo esc_url(get_admin_url().'options-general.php?page=wingu-options') ?>"
-           target="_blank"><?php _e('plugin_options_link', Wingu::name()) ?></a>
+        <a href="<?php echo esc_url(get_admin_url().'options-general.php?page=wingu-options') ?>" target="_blank">
+            <?php _e('plugin_options_link', Wingu::name()) ?></a>
         <?php
     }
 
@@ -551,9 +549,7 @@ class WinguAdmin
 
     public function wingu_settings_section() : void
     {
-        echo '<p>'.
-            __('wingu_settings_description', Wingu::name())
-            .'</p>';
+        echo '<p>' . __('wingu_settings_description', Wingu::name()) . '</p>';
     }
 
     public function wingu_settings_api_key($name) : void
@@ -621,13 +617,13 @@ class WinguAdmin
                 'post-new.php',
                 'plugins.php',
             ];
-//            todo: check whether thats it
+//            todo: check if those are all pages
             if (\in_array($pagenow, $whitelistDisplayNotice, true)) {
-                echo '<div class="notice notice-error"><p>'.__(
-                        'invalid_api_key', Wingu::name()
-                    ).' <a href="'.esc_url(
-                        get_admin_url().'options-general.php?page=wingu-options'
-                    ).'" target="_blank">'.__('here', Wingu::name()).'</a></div>';
+                echo '<div class="notice notice-error"><p>'
+                    .__('invalid_api_key', Wingu::name())
+                    . __('enter_valid_one', Wingu::name())
+                    . ' <a href="'.esc_url(get_admin_url().'options-general.php?page=wingu-options')
+                    . '" target="_blank">'.__('here', Wingu::name()).'</a></div>';
             }
         }
     }
@@ -698,10 +694,7 @@ class WinguAdmin
                 new RequestPack($createdContent->id(), $createdDeck->id(), substr(get_user_locale(), 0, 2))
             );
 //            todo: proper locale in every case
-            $winguApi->content()->attachMyContentToChannelsExclusively(
-                $createdContent->id(),
-                new PrivateContentChannels($_POST['wingu_post_triggers'])
-            );
+            $winguApi->content()->attachMyContentToChannelsExclusively($createdContent->id(), new PrivateContentChannels($_POST['wingu_post_triggers']));
         } elseif ($_POST['wingu_post_choice'] === 'existing-content') {
             $createdComponentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
             if ($createdComponentId === '') {
@@ -736,7 +729,7 @@ class WinguAdmin
         $winguTriggersList->ajax_response();
     }
 
-    public function ajax_trigger_pagination_script() : void
+    public function ajax_wingu_trigger_pagination_script() : void
     {
         echo '<script>';
         include __DIR__.'/js/wingu-ajax-pagination.js';

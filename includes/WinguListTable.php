@@ -28,16 +28,12 @@ class WinguListTable extends ListTable
 
     public function column_name($item)
     {
-        return sprintf('%1$s',
-            $item['name']
-        );
+        return $item['name'];
     }
 
     public function column_type($item)
     {
-        return sprintf('%1$s',
-            $item['type']
-        );
+        return $item['type'];
     }
 
     public function column_content($item)
@@ -96,9 +92,7 @@ class WinguListTable extends ListTable
         }
 
         if (isset($_REQUEST['orderby'], $_REQUEST['order'])) {
-            if ($_REQUEST['orderby'] === 'name') {
                 $sorting = new PrivateChannelsSorting(null, $_REQUEST['order']);
-            }
         } else {
             $sorting = new PrivateChannelsSorting(null, RequestParameters::SORTING_ORDER_ASC);
         }
