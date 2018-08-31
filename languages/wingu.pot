@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: wingu-wordpress-plugin\n"
+"Project-Id-Version: wingu\n"
 "POT-Creation-Date: 2012-10-05 10:50+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Wingu <hilfe@wingu.de>\n"
