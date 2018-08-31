@@ -460,7 +460,7 @@ class ListTable
         if (! empty($infinite_scroll)) {
             $pagination_links_class .= ' hide-if-js';
         }
-        $output .= "\n<span class='$pagination_links_class'>" . join("\n", $page_links) . '</span>';
+        $output .= "\n<span class='$pagination_links_class'>" . \implode("\n", $page_links) . '</span>';
 
         if ($total_pages) {
             $page_class = $total_pages < 2 ? ' one-page' : '';
@@ -592,7 +592,7 @@ class ListTable
      */
     public function get_column_count() : int
     {
-        list ($columns, $hidden) = $this->get_column_info();
+        [$columns, $hidden] = $this->get_column_info();
         $hidden = array_intersect(array_keys($columns), array_filter($hidden));
         return \count($columns) - \count($hidden);
     }
@@ -603,7 +603,7 @@ class ListTable
      */
     public function print_column_headers($with_id = true) : void
     {
-        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
+        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
 
         $current_url = set_url_scheme('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         $current_url = remove_query_arg('paged', $current_url);
@@ -636,7 +636,7 @@ class ListTable
             }
 
             if (isset($sortable[$column_key])) {
-                list($orderby, $desc_first) = $sortable[$column_key];
+                [$orderby, $desc_first] = $sortable[$column_key];
 
                 if ($current_orderby === $orderby) {
                     $order   = $current_order === 'ASC' ? 'DESC' : 'ASC';
@@ -657,7 +657,7 @@ class ListTable
             $id    = $with_id ? "id='$column_key'" : '';
 
             if (! empty($class)) {
-                $class = "class='" . join(' ', $class) . "'";
+                $class = "class='" . \implode(' ', $class) . "'";
             }
 
             echo "<$tag $scope $id $class>$column_display_name</$tag>";
@@ -780,7 +780,7 @@ class ListTable
      */
     protected function single_row_columns($item) : void
     {
-        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
+        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
             $classes = "$column_name column-$column_name";

@@ -19,6 +19,7 @@ use Wingu\Engine\SDK\Model\Response\Channel\Beacon\PrivateBeacon;
 use Wingu\Engine\SDK\Model\Response\Channel\Geofence\PrivateGeofence;
 use Wingu\Engine\SDK\Model\Response\Channel\Nfc\PrivateNfc;
 use Wingu\Engine\SDK\Model\Response\Channel\QrCode\PrivateQrCode;
+use Wingu\Engine\SDK\Model\Response\Content\PrivateContent;
 
 class WinguAdmin
 {
@@ -37,11 +38,11 @@ class WinguAdmin
     public function wingu_menu() : void
     {
         add_options_page(
-                __('options_page_title', Wingu::name()),
-                'Wingu',
-                'manage_options',
-                'wingu-options',
-                [$this, 'wingu_options']
+            __('options_page_title', Wingu::name()),
+            'Wingu',
+            'manage_options',
+            'wingu-options',
+            [$this, 'wingu_options']
         );
     }
 
@@ -239,14 +240,14 @@ class WinguAdmin
                             <table class="form-table">
                                 <tbody>
                                 <tr>
-                                    <th scope="row"><?php _e('trigger', Wingu::name()) ?></th>
+                                    <th scope="row"><label for="wingu_link_trigger"><?php _e('trigger', Wingu::name()) ?></label></th>
                                     <td><select id="wingu_link_trigger" name="wingu_link_trigger">
                                             <option value="<?php echo $_REQUEST['trigger']; ?>"
                                                     selected><?php echo $_REQUEST['name']; ?></option>
                                         </select></td>
                                 </tr>
                                 <tr>
-                                    <th scope="row"><?php _e('content', Wingu::name()) ?></th>
+                                    <th scope="row"><label for="wingu_link_content"><?php _e('content', Wingu::name()) ?></label></th>
                                     <td><select id="wingu_link_content" name="wingu_link_content">
                                             <?php
                                             $posts = get_posts(['post_type' => ['post', 'page']]);
@@ -426,6 +427,7 @@ class WinguAdmin
                     $response = $winguContentApi->myContents();
                     $current_content = get_post_meta($post->ID, Wingu::POST_KEY_CONTENT, true);
                     while ($response->valid()) {
+                        /** @var PrivateContent $current */
                         $current = $response->current();
                         if ($current->packs()[0] !== null) {
                             $deckId = $current->packs()[0]->deck()->id();
@@ -714,15 +716,15 @@ class WinguAdmin
     public function wingu_portal_unlink_triggers() : void
     {
         /** todo: unlinking from portal */
-        if (!isset($_POST['unlinked_triggers'])) {
-            return;
-        }
-
-        $input = file_get_contents('php://input');
-        $json = json_decode($input);
-
-        if ($json->id) {
-        }
+//        if (!isset($_POST['unlinked_triggers'])) {
+//            return;
+//        }
+//
+//        $input = file_get_contents('php://input');
+//        $json = json_decode($input);
+//
+//        if ($json->id) {
+//        }
     }
 
     public function _ajax_fetch_wingu_triggers_callback() : void

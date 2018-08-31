@@ -91,7 +91,7 @@ class Wingu
     {
         $wingu_i18n = new WinguI18n();
         $wingu_i18n->setDomain(self::name());
-        $this->loader->addAction('plugins_loaded', $wingu_i18n, 'load_plugin_textdomain');
+        $this->loader->addAction('plugins_loaded', $wingu_i18n, 'loadPluginTextDomain');
     }
 
     private function defineAdminHooks(): void

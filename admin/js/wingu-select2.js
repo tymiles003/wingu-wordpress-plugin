@@ -26,8 +26,10 @@ jQuery(document).ready(function($) {
 
     $("#wingu_post_choice").on("change", function() {
         let test = $(this).val();
+        $triggers.prop('required',false);
         if (test === 'new-content') {
             $triggers.parent().show();
+            $triggers.prop('required',true);
             $content.parent().hide();
         } else if (test === 'existing-content') {
             $triggers.parent().hide();

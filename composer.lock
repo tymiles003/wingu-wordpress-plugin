@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f447b923db4c5ea33c41ad4ec424e42e",
+    "content-hash": "0b8e632e782ebbb5c6cb47c080e2e309",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1352,12 +1352,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:wingu-GmbH/wingu-sdk-php.git",
-                "reference": "481e7ee0e7b9d2b006e53df99542d73b962f53de"
+                "reference": "890917b47ccd2a1ebb0e54343eb091de2dc2f61c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/481e7ee0e7b9d2b006e53df99542d73b962f53de",
-                "reference": "481e7ee0e7b9d2b006e53df99542d73b962f53de",
+                "url": "https://api.github.com/repos/wingu-GmbH/wingu-sdk-php/zipball/890917b47ccd2a1ebb0e54343eb091de2dc2f61c",
+                "reference": "890917b47ccd2a1ebb0e54343eb091de2dc2f61c",
                 "shasum": ""
             },
             "require": {
@@ -1368,6 +1368,7 @@
                 "php-http/message": "^1.6",
                 "php-http/message-factory": "^1.0",
                 "php-http/multipart-stream-builder": "^1.0",
+                "phpdocumentor/reflection-docblock": "^3.0|^4.0",
                 "psr/http-message": "^1.0",
                 "speicher210/business-hours": "^2.0",
                 "symfony/property-access": "^4.0",
@@ -1423,6 +1424,14 @@
                 {
                     "name": "Dragos Protung",
                     "email": "dragos@protung.ro"
+                },
+                {
+                    "name": "Cezary Stępkowski",
+                    "email": "cezary.stepkowski@wingu.de"
+                },
+                {
+                    "name": "Szymon Kamiński",
+                    "email": "szymon.kaminski@wingu.de"
                 }
             ],
             "description": "wingu engine PHP SDK",
@@ -1430,7 +1439,7 @@
                 "source": "https://github.com/wingu-GmbH/wingu-sdk-php/tree/master",
                 "issues": "https://github.com/wingu-GmbH/wingu-sdk-php/issues"
             },
-            "time": "2018-08-28T08:19:35+00:00"
+            "time": "2018-08-31T12:09:59+00:00"
         }
     ],
     "packages-dev": [
