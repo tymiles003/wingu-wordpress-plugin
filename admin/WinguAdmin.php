@@ -135,6 +135,8 @@ class WinguAdmin
 
     public function wingu_options() : void
     {
+
+
         if (!current_user_can('manage_options')) {
             wp_die(__('access_denied', Wingu::name()));
         }

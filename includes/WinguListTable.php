@@ -60,6 +60,11 @@ class WinguListTable extends ListTable
         ];
     }
 
+    public function get_default_primary_column_name() : string
+    {
+        return 'name';
+    }
+
     public function get_columns() : array
     {
         return [

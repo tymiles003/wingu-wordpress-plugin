@@ -9,7 +9,7 @@ class WinguI18n
     /** @var string */
     private $domain;
 
-    public function loadPluginTextdomain() : void
+    public function load_plugin_textdomain() : void
     {
         load_plugin_textdomain(
             $this->domain,

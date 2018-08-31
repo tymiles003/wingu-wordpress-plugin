@@ -37,12 +37,6 @@ class ListTable
     private $_pagination;
 
     /**
-     * The view switcher modes.
-     * @var array
-     */
-    protected $modes = [];
-
-    /**
      * Stores the value returned by ->get_column_info().
      * @var array
      */
@@ -54,7 +48,6 @@ class ListTable
     /* @var array */
     protected $compat_methods = [
         'set_pagination_args',
-        'get_views',
         'row_actions',
         'get_items_per_page',
         'pagination',
@@ -110,13 +103,6 @@ class ListTable
 
         if ($args['ajax']) {
             add_action('admin_footer', [$this, '_js_vars']);
-        }
-
-        if (empty($this->modes)) {
-            $this->modes = [
-                'list' => 'List View',
-                'excerpt' => 'Excerpt View',
-            ];
         }
     }
 
@@ -242,12 +228,9 @@ class ListTable
         }
     }
 
-    /**
-     * Whether the table has items to display or not
-     */
     public function has_items() : bool
     {
-        return ! empty($this->items);
+        return !empty($this->items);
     }
 
     /**
@@ -287,7 +270,7 @@ class ListTable
 //        remove_query_arg('paged');
 //        add_query_arg('paged', 1);
 //        $_REQUEST['paged'] = 1;
-        echo '<input type="hidden" name="paged" value="1" />';
+//        echo '<input type="hidden" name="paged" value="1" />';
 
         ?>
         <p class="search-box">
@@ -297,44 +280,6 @@ class ListTable
             <?php submit_button($text, '', '', false, ['id' => 'search-submit']); ?>
         </p>
         <?php
-    }
-
-    /**
-     * Get an associative array (id => link) with the list
-     * of views available on this table.
-     * @return array
-     */
-    protected function get_views() : array
-    {
-        return [];
-    }
-
-    /**
-     * Display the list of views available on this table.
-     */
-    public function views() : void
-    {
-        $views = $this->get_views();
-        /**
-         * Filters the list of available list table views.
-         * The dynamic portion of the hook name, `$this->screen->id`, refers
-         * to the ID of the current screen, usually a string.
-         * @param array $views An array of available list table views.
-         */
-        $views = apply_filters("views_{$this->screen->id}", $views);
-
-        if (empty($views)) {
-            return;
-        }
-
-        $this->screen->render_screen_reader_content('heading_views');
-
-        echo "<ul class='subsubsub'>\n";
-        foreach ($views as $class => $view) {
-            $views[$class] = "\t<li class='$class'>$view";
-        }
-        echo implode(" |</li>\n", $views) . "</li>\n";
-        echo '</ul>';
     }
 
     /**
@@ -556,25 +501,7 @@ class ListTable
      */
     protected function get_default_primary_column_name() : string
     {
-        $columns = $this->get_columns();
-        $column  = '';
-
-        if (empty($columns)) {
-            return $column;
-        }
-
-        // We need a primary defined so responsive views show something,
-        // so let's fall back to the first non-checkbox column.
-        foreach ($columns as $col => $column_name) {
-            if ($col === 'cb') {
-                continue;
-            }
-
-            $column = $col;
-            break;
-        }
-
-        return $column;
+        die('function WP_List_Table::get_default_primary_column_name() must be over-ridden in a sub-class.');
     }
 
     /**
@@ -595,10 +522,8 @@ class ListTable
         $columns = get_column_headers($this->screen);
         $default = $this->get_default_primary_column_name();
 
-        // If the primary column doesn't exist fall back to the
-        // first non-checkbox column.
         if (! isset($columns[$default])) {
-            $default = ListTable::get_default_primary_column_name();
+            $default = $this->get_default_primary_column_name();
         }
 
         /**
@@ -621,10 +546,7 @@ class ListTable
      */
     protected function get_column_info() : array
     {
-        // $_column_headers is already set / cached
         if ($this->_column_headers !== null && \is_array($this->_column_headers)) {
-            // Back-compat for list tables that have been manually setting $_column_headers for horse reasons.
-            // In 4.3, we added a fourth argument for primary column.
             $column_headers = [[], [], [], $this->get_primary_column_name()];
             foreach ($this->_column_headers as $key => $value) {
                 $column_headers[$key] = $value;
@@ -677,7 +599,6 @@ class ListTable
 
     /**
      * Print column headers, accounting for hidden and sortable columns.
-     * @staticvar int $cb_counter
      * @param bool $with_id Whether to set the id attribute or not
      */
     public function print_column_headers($with_id = true) : void
@@ -699,13 +620,6 @@ class ListTable
             $current_order = 'ASC';
         }
 
-        if (! empty($columns['cb'])) {
-            static $cb_counter = 1;
-            $columns['cb'] = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">Select All</label>'
-                . '<input id="cb-select-all-' . $cb_counter . '" type="checkbox" />';
-            $cb_counter++;
-        }
-
         foreach ($columns as $column_key => $column_display_name) {
             $class = ['manage-column', "column-$column_key"];
 
@@ -713,9 +627,7 @@ class ListTable
                 $class[] = 'hidden';
             }
 
-            if ($column_key === 'cb') {
-                $class[] = 'check-column';
-            } elseif (\in_array($column_key, ['posts', 'comments', 'links'])) {
+            if (\in_array($column_key, ['posts', 'comments', 'links'])) {
                 $class[] = 'num';
             }
 
@@ -740,8 +652,8 @@ class ListTable
                         $current_url)) . '"><span>' . $column_display_name . '</span><span class="dashicons ' . ($current_order === 'ASC' ? 'dashicons-arrow-up' : 'dashicons-arrow-down') . '"></span></a>';
             }
 
-            $tag   = ($column_key === 'cb') ? 'td' : 'th';
-            $scope = ($tag === 'th') ? 'scope="col"' : '';
+            $tag   = 'th';
+            $scope = 'scope="col"';
             $id    = $with_id ? "id='$column_key'" : '';
 
             if (! empty($class)) {
@@ -863,14 +775,6 @@ class ListTable
     }
 
     /**
-     * @param object $item
-     * @param string $column_name
-     */
-    protected function column_default($item, $column_name) : void
-    {
-    }
-
-    /**
      * Generates the columns for a single row of the table
      * @param object $item The current item
      */
@@ -922,32 +826,7 @@ class ListTable
      */
     public function ajax_response() : void
     {
-        $this->prepare_items();
-
-        ob_start();
-        if (empty($_REQUEST['no_placeholder'])) {
-            $this->display_rows_or_placeholder();
-        } else {
-            $this->display_rows();
-        }
-
-        $rows = ob_get_clean();
-
-        $response = ['rows' => $rows];
-
-        if (isset($this->_pagination_args['total_items'])) {
-            $response['total_items_i18n'] = sprintf(
-                _n('single_trigger', 'plural_trigger', $this->_pagination_args['total_items'], Wingu::name()),
-                number_format_i18n($this->_pagination_args['total_items'])
-            );
-        }
-
-        if (isset($this->_pagination_args['total_pages'])) {
-            $response['total_pages']      = $this->_pagination_args['total_pages'];
-            $response['total_pages_i18n'] = number_format_i18n($this->_pagination_args['total_pages']);
-        }
-
-        die(wp_json_encode($response));
+        die('function WP_List_Table::ajax_response() must be over-ridden in a sub-class.');
     }
 
     /**

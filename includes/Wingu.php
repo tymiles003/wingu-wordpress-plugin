@@ -90,7 +90,7 @@ class Wingu
     private function setLocale(): void
     {
         $wingu_i18n = new WinguI18n();
-        $wingu_i18n->set_domain(self::name());
+        $wingu_i18n->setDomain(self::name());
         $this->loader->addAction('plugins_loaded', $wingu_i18n, 'load_plugin_textdomain');
     }
 
