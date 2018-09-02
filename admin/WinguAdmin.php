@@ -106,6 +106,38 @@ class WinguAdmin
             $result['results'] = $all_triggers;
             echo \json_encode($result);
         } catch (\Exception $exception) {
+            update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
+            update_option(Wingu::GLOBAL_KEY_API_KEY, '');
+            _e('generic_error', Wingu::name());
+        }
+
+        wp_die();
+    }
+
+    public function get_wingu_private_contents() : void
+    {
+        try {
+            $response = Wingu::$API->content()->myContents();
+            $all_contents = [];
+            $result = [];
+            while ($response->valid()) {
+                /** @var PrivateContent $current */
+                $current = $response->current();
+                if ($current->packs()[0] !== null) {
+                    $deckId = $current->packs()[0]->deck()->id();
+                    $deckTitle = $current->packs()[0]->deck()->title();
+                } else {
+                    $deckId = __('no_id', Wingu::name());
+                    $deckTitle = __('no_title', Wingu::name());
+                }
+                $all_contents[] = (object)['id' => $deckId, 'text' => $deckTitle];
+                $response->next();
+            }
+            $result['results'] = $all_contents;
+            echo \json_encode($result);
+        } catch (Unauthorized $exception) {
+            update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
+            update_option(Wingu::GLOBAL_KEY_API_KEY, '');
             _e('generic_error', Wingu::name());
         }
 
@@ -384,8 +416,6 @@ class WinguAdmin
 
     public function add_wingu_post_meta_box($post) : void
     {
-        $winguContentApi = Wingu::$API->content();
-
         if (!current_user_can('edit_others_posts')) {
             wp_die(__('access_denied', Wingu::name()));
         }
@@ -421,32 +451,7 @@ class WinguAdmin
             <select id="wingu_post_triggers" name="wingu_post_triggers[]" multiple></select>
         </div>
         <div>
-            <select id="wingu_post_content" name="wingu_post_content">
-                <?php
-                try {
-                    $response = $winguContentApi->myContents();
-                    $current_content = get_post_meta($post->ID, Wingu::POST_KEY_CONTENT, true);
-                    while ($response->valid()) {
-                        /** @var PrivateContent $current */
-                        $current = $response->current();
-                        if ($current->packs()[0] !== null) {
-                            $deckId = $current->packs()[0]->deck()->id();
-                            $deckTitle = $current->packs()[0]->deck()->title();
-                        } else {
-                            $deckId = __('no_id', Wingu::name());
-                            $deckTitle = __('no_title', Wingu::name());
-                        }
-                        echo '<option value="'.$deckId.'" '.(($current_content === $current->id(
-                                )) ? 'selected' : '').'>'.$deckTitle.'</option>';
-                        $response->next();
-                    }
-                } catch (Unauthorized $exception) {
-                    update_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID, 'false');
-                    update_option(Wingu::GLOBAL_KEY_API_KEY, '');
-                    _e('generic_error', Wingu::name());
-                }
-                ?>
-            </select>
+            <select id="wingu_post_content" name="wingu_post_content"></select>
         </div>
         <br/>
         <a href="<?php echo esc_url(get_admin_url().'options-general.php?page=wingu-options') ?>" target="_blank">

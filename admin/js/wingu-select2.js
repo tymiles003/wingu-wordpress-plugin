@@ -18,7 +18,18 @@ jQuery(document).ready(function($) {
         }
     });
     $content.select2({
-        width: '100%'
+        width: '100%',
+        ajax: {
+            url: ajaxurl,
+            dataType: 'json',
+            method: 'POST',
+            delay: 250,
+            data: function (params) {
+                return {
+                    'action': "get_wingu_private_contents"
+                }
+            }
+        }
     });
 
     $content.parent().hide();
