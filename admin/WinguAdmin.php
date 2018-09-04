@@ -171,19 +171,13 @@ class WinguAdmin
         $activeTab = $_GET['tab'] ?? 'settings';
 
         echo '<h2 class="nav-tab-wrapper">';
-        echo "<a href='?page=wingu-options&tab=settings' id='settings_tab' class='nav-tab " . ($activeTab === 'settings' ? 'nav-tab-active' : '') . "'>" . __(
-                'settings',
-                Wingu::name()
-            ) . '</a>';
+        echo "<a href='?page=wingu-options&tab=settings' id='settings_tab' class='nav-tab " . ($activeTab === 'settings' ? 'nav-tab-active' : '') . "'>"
+            . __('settings', Wingu::name()) . '</a>';
         if (get_option(Wingu::GLOBAL_KEY_API_KEY_IS_VALID) === 'true') {
-            echo "<a href='?page=wingu-options&tab=triggers' id='triggers_tab' class='nav-tab " . ($activeTab === 'triggers' ? 'nav-tab-active' : '') . "'>" . __(
-                    'triggers',
-                    Wingu::name()
-                ) . '</a>';
-            echo "<a href='?page=wingu-options&tab=link' id='link_tab' class='nav-tab " . ($activeTab === 'link' ? 'nav-tab-active' : '') . "'>" . __(
-                    'linking_contents_triggers',
-                    Wingu::name()
-                ) . '</a>';
+            echo "<a href='?page=wingu-options&tab=triggers' id='triggers_tab' class='nav-tab " . ($activeTab === 'triggers' ? 'nav-tab-active' : '') . "'>"
+                . __('triggers', Wingu::name()) . '</a>';
+            echo "<a href='?page=wingu-options&tab=link' id='link_tab' class='nav-tab " . ($activeTab === 'link' ? 'nav-tab-active' : '') . "'>"
+                . __('linking_contents_triggers', Wingu::name()) . '</a>';
         }
         echo '</h2>';
 
@@ -579,7 +573,7 @@ class WinguAdmin
 
     public function wingu_post_updated($postId, $updatedPost) : void
     {
-        if (! isset($_POST['wingu_post_choice']) || $_POST['wingu_post_choice'] === 'do-nothing') {
+        if (! isset($_POST['wingu_post_choice'])) {
             return;
         }
 
@@ -588,30 +582,40 @@ class WinguAdmin
         $linkback = $_POST['wingu_post_link_back'] ?? 'false';
         $text = $this->parseWordpressContentText($updatedPost, $dispPref, $linkback);
 
-        if ($_POST['wingu_post_choice'] === 'update-component') {
-            $componentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
-            if ($componentId !== '') {
-                $winguApi->component()->updateCmsComponent($componentId, new CMS($text, 'html'));
-            } else {
-                return;
-            }
-        } elseif ($_POST['wingu_post_choice'] === 'new-content') {
-            $createdContent = $this->createNewWinguContent($updatedPost, $text);
+        switch ($_POST['wingu_post_choice']) {
+            case 'update-component':
+                $componentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
+                if ($componentId !== '') {
+                    $winguApi->component()->updateCmsComponent($componentId, new CMS($text, 'html'));
+                } else {
+                    return;
+                }
+                break;
 
-            $winguApi->content()->attachMyContentToChannelsExclusively($createdContent->id(),
-                new PrivateContentChannels($_POST['wingu_post_triggers']));
-        } elseif ($_POST['wingu_post_choice'] === 'existing-content') {
-            $createdComponentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
-            if ($createdComponentId === '') {
-                $createdComponent   = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
-                $createdComponentId = $createdComponent->id();
-                update_post_meta($postId, Wingu::POST_KEY_COMPONENT, $createdComponentId);
-            } else {
-                $winguApi->component()->updateCmsComponent($createdComponentId, new CMS($text, 'html'));
-            }
+            case 'new-content':
+                $createdContent = $this->createNewWinguContent($updatedPost, $text);
+                $winguApi->content()->attachMyContentToChannelsExclusively(
+                        $createdContent->id(),
+                        new PrivateContentChannels($_POST['wingu_post_triggers']));
+                break;
 
-            $winguApi->card()->addCardToDeck(new RequestCard($_POST['wingu_post_content'], $createdComponentId, 0));
+            case 'existing-content':
+                $createdComponentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
+                if ($createdComponentId === '') {
+                    $createdComponent   = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+                    $createdComponentId = $createdComponent->id();
+                    update_post_meta($postId, Wingu::POST_KEY_COMPONENT, $createdComponentId);
+                } else {
+                    $winguApi->component()->updateCmsComponent($createdComponentId, new CMS($text, 'html'));
+                }
+                $winguApi->card()->addCardToDeck(new RequestCard($_POST['wingu_post_content'], $createdComponentId, 0));
+                break;
+
+            case 'do-nothing':
+            default:
+               return;
         }
+
     }
 
     public function wingu_portal_unlink_triggers() : void
