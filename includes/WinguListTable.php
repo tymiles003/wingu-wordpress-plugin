@@ -202,7 +202,7 @@ class WinguListTable extends ListTable
         $response['column_headers']       = $headers;
 
         if ($total_items !== null) {
-            $response['total_items_i18n'] = sprintf(_n('single_trigger', 'plural_trigger', $total_items),
+            $response['total_items_i18n'] = sprintf(_n('plural_trigger', 'plural_trigger', $total_items),
                 number_format_i18n($total_items));
         }
 

@@ -370,7 +370,7 @@ class ListTable
             $this->screen->render_screen_reader_content('heading_pagination');
         }
 
-        $output = '<span class="displaying-num">' . sprintf(_n('single_trigger', 'plural_trigger', $total_items, Wingu::name()),
+        $output = '<span class="displaying-num">' . sprintf(_n('plural_trigger', 'plural_trigger', $total_items, Wingu::name()),
                 number_format_i18n($total_items)) . '</span>';
 
         $current              = $this->get_pagenum();
@@ -433,7 +433,7 @@ class ListTable
             );
         }
         $html_total_pages = sprintf("<span class='total-pages'>%s</span>", number_format_i18n($total_pages));
-        $page_links[]     = $total_pages_before . sprintf(_x('page_x_of_y', 'paging', Wingu::name()), $html_current_page,
+        $page_links[]     = $total_pages_before . sprintf(__('page_x_of_y', Wingu::name()), $html_current_page,
                 $html_total_pages) . $total_pages_after;
 
         if ($disable_next) {
