@@ -18,15 +18,9 @@
   "require": {
     "php": "^7.1",
     "composer/installers": "^1.5",
-    "wingu/wingu-sdk-php": "dev-master",
+    "wingu/wingu-sdk-php": "^0.1",
     "guzzlehttp/psr7": "^1.4"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:wingu-GmbH/wingu-sdk-php.git"
-    }
-  ],
   "require-dev": {
     "roave/security-advisories": "dev-master"
   },
