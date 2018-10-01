@@ -6,6 +6,7 @@ namespace Wingu\Plugin\Wordpress;
 
 use Wingu\Engine\SDK\Api\Exception\HttpClient\Unauthorized;
 use Wingu\Engine\SDK\Model\Request\Card as RequestCard;
+use Wingu\Engine\SDK\Model\Request\Channel\Beacon\BeaconLocation;
 use Wingu\Engine\SDK\Model\Request\Channel\Beacon\PrivateBeacon as RequestBeacon;
 use Wingu\Engine\SDK\Model\Request\Channel\Geofence\PrivateGeofence as RequestGeofence;
 use Wingu\Engine\SDK\Model\Request\Channel\Nfc\PrivateNfc as RequestNfc;
@@ -215,7 +216,7 @@ class WinguAdmin
                         case 'beacon':
                             Wingu::$API->beacon()->updateMyBeacon(
                                 $_REQUEST['trigger'],
-                                new RequestBeacon(new StringValue(null))
+                                new RequestBeacon(new BeaconLocation(null, null), new StringValue(null))
                             );
                             break;
                         case 'geofence':
@@ -300,7 +301,7 @@ class WinguAdmin
                                 case 'beacon':
                                     $winguApi->beacon()->updateMyBeacon(
                                         $_REQUEST['wingu_link_trigger'],
-                                        new RequestBeacon(new StringValue($createdContent->id()))
+                                        new RequestBeacon(new BeaconLocation(null, null), new StringValue($createdContent->id()))
                                     );
                                     break;
                                 case 'geofence':
@@ -316,7 +317,7 @@ class WinguAdmin
                                     );
                                     break;
                                 case 'qrcode':
-                                   $winguApi->qrcode()->updateMyQrCode(
+                                    $winguApi->qrcode()->updateMyQrCode(
                                         $_REQUEST['wingu_link_trigger'],
                                         new RequestQrCode(new StringValue($createdContent->id()))
                                     );
@@ -586,7 +587,7 @@ class WinguAdmin
             case 'update-component':
                 $componentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
                 if ($componentId !== '') {
-                    $winguApi->component()->updateCmsComponent($componentId, new CMS($text, 'html'));
+                    $winguApi->component()->cms()->update($componentId, new CMS\Update($text, 'html'));
                 } else {
                     return;
                 }
@@ -595,25 +596,25 @@ class WinguAdmin
             case 'new-content':
                 $createdContent = $this->createNewWinguContent($updatedPost, $text);
                 $winguApi->content()->attachMyContentToChannelsExclusively(
-                        $createdContent->id(),
-                        new PrivateContentChannels($_POST['wingu_post_triggers']));
+                    $createdContent->id(),
+                    new PrivateContentChannels($_POST['wingu_post_triggers']));
                 break;
 
             case 'existing-content':
                 $createdComponentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
                 if ($createdComponentId === '') {
-                    $createdComponent   = $winguApi->component()->createCmsComponent(new CMS($text, 'html'));
+                    $createdComponent   = $winguApi->component()->cms()->create(new CMS\Create($text, 'html'));
                     $createdComponentId = $createdComponent->id();
                     update_post_meta($postId, Wingu::POST_KEY_COMPONENT, $createdComponentId);
                 } else {
-                    $winguApi->component()->updateCmsComponent($createdComponentId, new CMS($text, 'html'));
+                    $winguApi->component()->cms()->update($createdComponentId, new CMS\Update($text, 'html'));
                 }
                 $winguApi->card()->addCardToDeck(new RequestCard($_POST['wingu_post_content'], $createdComponentId, 0));
                 break;
 
             case 'do-nothing':
             default:
-               return;
+                return;
         }
 
     }
@@ -692,17 +693,17 @@ class WinguAdmin
 
         $createdComponentId = get_post_meta($post->ID, Wingu::POST_KEY_COMPONENT, true);
         if ($createdComponentId === '') {
-            $createdComponent   = $winguApi->component()->createCmsComponent(
-                new CMS($text, 'html')
+            $createdComponent   = $winguApi->component()->cms()->create(
+                new CMS\Create($text, 'html')
             );
             $createdComponentId = $createdComponent->id();
             update_post_meta($post->ID, Wingu::POST_KEY_COMPONENT, $createdComponentId);
         } else {
-            $winguApi->component()->updateCmsComponent($createdComponentId, new CMS($text, 'html'));
+            $winguApi->component()->cms()->update($createdComponentId, new CMS\Update($text, 'html'));
         }
 
         $createdDeck = $winguApi->deck()->createDeck(
-            new \Wingu\Engine\SDK\Model\Request\Deck\Deck($post->post_title, null, null)
+            new \Wingu\Engine\SDK\Model\Request\Deck\Create($post->post_title, null, null)
         );
         $template    = $winguApi->contentTemplate()->templates()->current()->id();
 
@@ -715,7 +716,7 @@ class WinguAdmin
             new RequestCard($createdDeck->id(), $createdComponentId, 0)
         );
         $winguApi->content()->createMyPack(
-            new RequestPack(
+            new RequestPack\Create(
                 $createdContent->id(),
                 $createdDeck->id(),
                 substr(get_user_locale(), 0, 2)

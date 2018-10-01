@@ -17,6 +17,8 @@
   },
   "require": {
     "php": "^7.1",
+    "ext-json": "*",
+
     "composer/installers": "^1.5",
     "wingu/wingu-sdk-php": "^0.1",
     "guzzlehttp/psr7": "^1.4"
