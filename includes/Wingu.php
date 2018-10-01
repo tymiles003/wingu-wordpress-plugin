@@ -26,8 +26,6 @@ class Wingu
     public const POST_KEY_CONTENT = '_wingu_post_content';
     public const POST_KEY_COMPONENT = '_wingu_post_component';
 
-    public const DEV = 'http://wingu';
-
     /** @var WinguLoader */
     protected $loader;
 
@@ -63,7 +61,7 @@ class Wingu
         $this->defineAdminHooks();
         $this->definePublicHooks();
 
-        self::$API_URL = Configuration::BACKEND_URL_SANDBOX;
+        self::$API_URL = Configuration::BACKEND_URL_PRODUCTION;
         self::refreshApiKey();
     }
 
