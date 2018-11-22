@@ -3,102 +3,157 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.2\n"
 
 msgid "access_denied"
 msgstr "Du hast keine ausreichende Berechtigung, um auf diese Seite zuzugreifen."
+
 msgid "add_to_existing_content"
-msgstr "Füge WP Content zu bestehenden wingu Content hinzu"
+msgstr "Füge WP Content zu bestehenden Wingu Content hinzu"
+
 msgid "api_key"
 msgstr "API Key"
-msgid "case_insensitive_placeholder"
-msgstr "Platzhalter sind Groß-/Kleinschreibung unempfindlich"
+
+msgid "case_insensitive_placeholders"
+msgstr "Platzhalter sind Groß-/Kleinschreibung unempfindlich."
+
 msgid "content"
 msgstr "Content"
+
 msgid "create_new_content"
 msgstr "Erstelle neuen Content und verknüpfe ihn mit einem Trigger"
+
 msgid "current_page"
 msgstr "Folgende Seite"
+
 msgid "display"
 msgstr "Display"
+
 msgid "do_nothing"
 msgstr "Tue nichts"
+
 msgid "enter_valid_one"
 msgstr "Gültiger Schlüssel eingeben"
+
 msgid "excerpt"
 msgstr "Ausschnitt"
+
 msgid "first_page"
 msgstr "Erste Seite"
+
 msgid "generic_error"
 msgstr "Da ist etwas falsch gegangen. Kontaktiere unseren Support."
+
 msgid "here"
 msgstr "hier"
+
 msgid "invalid_api_key"
-msgstr "ungültiger wingu API Key"
+msgstr "Ungültiger wingu API Key."
+
 msgid "last_page"
 msgstr "Letzte Seite"
+
 msgid "link_back"
 msgstr "Link zurück"
+
 msgid "link_back_placeholders"
-msgstr "vorhandene Optionen"
+msgstr "Vorhandene Optionen"
+
 msgid "link_back_text"
 msgstr "Link zurück Text"
+
 msgid "linked_to"
 msgstr "verknüpft mit"
+
 msgid "linking_contents_triggers"
-msgstr "mit wingu Trigger verknüpfter Content"
+msgstr "mit Wingu Trigger verknüpfter Content"
+
 msgid "linking_contents_triggers_description"
-msgstr "Du kannst WordPress Content mit wingu Trigger nicht nur in der Post-/Seitenansicht, sondern auch direkt aus der Liste der Trigger in den Einstellungen verknüpfen. Klicke dazu einfach auf den Link, der angezeigt wird, wenn Du mit der Maus über den ausgewählten Trigger fährst. Globale Einstellungen werden gegenüber postspezifischen berücksichtigt."
+msgstr "Du kannst WordPress Content mit Wingu Trigger nicht nur in der Post-/Seitenansicht, sondern auch direkt aus der Liste der Trigger in den Einstellungen verknüpfen. Klicke dazu einfach auf den Link, der angezeigt wird, wenn Du mit der Maus über den ausgewählten Trigger fährst. Globale Einstellungen werden gegenüber postspezifischen berücksichtigt."
+
 msgid "name"
 msgstr "Name"
+
 msgid "next_page"
 msgstr "Nächste Seite"
+
 msgid "no_content_attached"
 msgstr "Kein Content angeheftet"
+
 msgid "no_id"
-msgstr "keine ID"
+msgstr "Keine ID"
+
 msgid "no_title"
-msgstr "kein Titel"
+msgstr "Kein Titel"
+
 msgid "no_triggers"
-msgstr "Keine Trigger gefunden"
+msgstr "Keine Trigger gefunden."
+
 msgid "options_page_title"
-msgstr "wingu Optionen"
+msgstr "Wingu Optionen"
+
 msgid "page_x_of_y"
 msgstr "%1$s von %2$s"
+
 msgid "plugin_options_link"
 msgstr "Geh zu den Plugin Optionen"
+
 msgid "plural_trigger"
 msgid_plural "plural_trigger"
 msgstr[0] "1 Trigger"
 msgstr[1] "% Trigger"
+
 msgid "previous_page"
 msgstr "Vorherige Seite"
+
 msgid "run_composer_install_first"
-msgstr "Du musst erst 'composer installieren' im Plugin-Verzeichnis ausführen."
+msgstr "Du musst erst 'composer install' im Plugin-Verzeichnis ausführen."
+
 msgid "save"
 msgstr "Änderungen speichern"
+
 msgid "search"
 msgstr "Suche"
+
 msgid "settings"
-msgstr "wingu Einstellungen"
+msgstr "Wingu Einstellungen"
+
 msgid "show_details"
 msgstr "Zeige mehr Details"
+
 msgid "single_trigger"
 msgstr "1 Trigger"
+
 msgid "submit_link_content_trigger"
-msgstr "Content mit wingu Trigger verknüpfen"
+msgstr "Content mit Wingu Trigger verknüpfen"
+
 msgid "trigger"
 msgstr "Trigger"
+
 msgid "triggers"
-msgstr "wingu Trigger"
+msgstr "Wingu Triggers"
+
 msgid "type"
 msgstr "Typ"
+
 msgid "unlinked_content_from"
-msgstr "von Deinem wingu Trigger"
+msgstr "von Deinem Wingu Trigger"
+
 msgid "unlinked_content_named"
 msgstr "Erfolgreich getrennt von Content "
+
 msgid "update_content"
-msgstr "Content auf wingu Plattform updaten"
+msgstr "Content auf Wingu Plattform updaten"
+
 msgid "validate"
 msgstr "Bestätigen"
+
 msgid "wingu_settings_description"
 msgstr "Gib Deinen API Key ein. Wähle, ob Du zu ganzen Beiträgen oder nur zu Auszügen verlinken willst. Wähle, ob am Ende Deines Textes zurück verlinkt werden soll."
