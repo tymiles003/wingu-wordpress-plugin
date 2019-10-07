@@ -12,7 +12,7 @@ use Wingu\Engine\SDK\Model\Request\Channel\Geofence\PrivateGeofence as RequestGe
 use Wingu\Engine\SDK\Model\Request\Channel\Nfc\PrivateNfc as RequestNfc;
 use Wingu\Engine\SDK\Model\Request\Channel\QrCode\PrivateQrCode as RequestQrCode;
 use Wingu\Engine\SDK\Model\Request\Channel\PrivateChannelsFilter;
-use Wingu\Engine\SDK\Model\Request\Component\CMS;
+use Wingu\Engine\SDK\Model\Request\Component\Html;
 use Wingu\Engine\SDK\Model\Request\Content\Pack as RequestPack;
 use Wingu\Engine\SDK\Model\Request\Content\PrivateContentChannels;
 use Wingu\Engine\SDK\Model\Request\StringValue;
@@ -587,7 +587,7 @@ class WinguAdmin
             case 'update-component':
                 $componentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
                 if ($componentId !== '') {
-                    $winguApi->component()->cms()->update($componentId, new CMS\Update($text, 'html'));
+                    $winguApi->component()->html()->update($componentId, new Html\Update($text));
                 } else {
                     return;
                 }
@@ -603,11 +603,11 @@ class WinguAdmin
             case 'existing-content':
                 $createdComponentId = get_post_meta($postId, Wingu::POST_KEY_COMPONENT, true);
                 if ($createdComponentId === '') {
-                    $createdComponent   = $winguApi->component()->cms()->create(new CMS\Create($text, 'html'));
+                    $createdComponent   = $winguApi->component()->html()->create(new Html\Create($text));
                     $createdComponentId = $createdComponent->id();
                     update_post_meta($postId, Wingu::POST_KEY_COMPONENT, $createdComponentId);
                 } else {
-                    $winguApi->component()->cms()->update($createdComponentId, new CMS\Update($text, 'html'));
+                    $winguApi->component()->html()->update($createdComponentId, new Html\Update($text));
                 }
                 $winguApi->card()->addCardToDeck(new RequestCard($_POST['wingu_post_content'], $createdComponentId, 0));
                 break;
@@ -693,13 +693,13 @@ class WinguAdmin
 
         $createdComponentId = get_post_meta($post->ID, Wingu::POST_KEY_COMPONENT, true);
         if ($createdComponentId === '') {
-            $createdComponent   = $winguApi->component()->cms()->create(
-                new CMS\Create($text, 'html')
+            $createdComponent   = $winguApi->component()->html()->create(
+                new Html\Create($text)
             );
             $createdComponentId = $createdComponent->id();
             update_post_meta($post->ID, Wingu::POST_KEY_COMPONENT, $createdComponentId);
         } else {
-            $winguApi->component()->cms()->update($createdComponentId, new CMS\Update($text, 'html'));
+            $winguApi->component()->html()->update($createdComponentId, new Html\Update($text));
         }
 
         $createdDeck = $winguApi->deck()->createDeck(

@@ -16,11 +16,11 @@
     "preferred-install": "dist"
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.2",
     "ext-json": "*",
 
     "composer/installers": "^1.5",
-    "wingu/wingu-sdk-php": "^0.1",
+    "wingu/wingu-sdk-php": "dev-master",
     "guzzlehttp/psr7": "^1.4"
   },
   "require-dev": {

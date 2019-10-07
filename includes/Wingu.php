@@ -49,7 +49,7 @@ class Wingu
         if (\defined('WINGU_VERSION')) {
             $this::$version = WINGU_VERSION;
         } else {
-            $this::$version = '1.0';
+            $this::$version = '1.0.0';
         }
 
         $this::$basename = plugin_basename(__FILE__);

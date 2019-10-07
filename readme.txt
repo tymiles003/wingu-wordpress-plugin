@@ -3,7 +3,7 @@ Contributors: wingu, szymonkaminski
 Tags: syndication, proximity platform, geolocation, location, geofence, nfc, qrcode, beacon, iBeacon, Eddystone
 Requires at least: 4.6
 Tested up to: 4.9
-Stable tag: 1.0
+Stable tag: 1.0.0
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -33,7 +33,7 @@ You can do so either in PostPage create/edit view or in Settings -> Wingu screen
 You may have to enable Wingu Metabox by clicking **Screen Options** in the upper right corner of those screens and making sure that checkbox located left of **Wingu** is checked.
 
 == Changelog ==
-= 1.0 =
+= 1.0.0 =
 * Release of the plugin.
 
 == Configuration ==
@@ -44,10 +44,10 @@ You can decide whether you want to, by default, send to Wingu Triggers whole pos
 
 Assuming that you successfully installed and configured the plugin, to send your WordPress content to Wingu Trigger you have to:
 1. Open existing post or create new one
-1. After you're done editing its content, locate Wingu Metabox, if it's not there check FAQ below
-1. Choose whether you want to send to Wingu Trigger post/page content or excerpt
-1. Choose whether you want to add linkback that you configured in **Settings** at the end of the content
-1. Choose one of the options from select box, either:
+2. After you're done editing its content, locate Wingu Metabox, if it's not there check FAQ below
+3. Choose whether you want to send to Wingu Trigger post/page content or excerpt
+4. Choose whether you want to add linkback that you configured in **Settings** at the end of the content
+5. Choose one of the options from select box, either:
 * do nothing
 * update content from WordPress on Wingu Platform - both WP and Wingu Platform will have same updated copy of your content
 * Create new Wingu Content and link to Trigger - Most basic option, just choose Triggers you want to attach your content to

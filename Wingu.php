@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Plugin Name: Wingu
  * Plugin URI: https://www.wingu.de/en/developer
  * Description: Allows you to seamlessly link content you have created on Wordpress Platform to Triggers you manage through Wingu Proximity Platform.
- * Version: 1.0
+ * Version: 1.0.0
  * Author: Wingu
  * Author URI: https://www.wingu.de
  * Author Email: hilfe@wingu.de
